@@ -7,3 +7,6 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+
+# Private notes (not committed)
+private/
