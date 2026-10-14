@@ -1,190 +1,152 @@
 # Behavioral evaluation scenarios
 
-Run these scenarios with `create-skill` active. They evaluate the interviewer's
-behavior, not the proposed skill's behavior. Start each scenario in a fresh
-conversation unless its steps explicitly continue the same conversation.
+Run these scenarios with `create-skill` active. They evaluate the authoring
+agent's behavior, not the behavior of any skill it creates. Start each scenario
+in a fresh conversation unless its steps explicitly continue the same one.
 
 Record the assistant's messages and any tool calls. Deliver user turns in order,
-allowing intervening interview rounds when needed. Judge meaning and observable
-actions; do not require exact wording. These are manual scenarios, not results
-from an automated test runner.
+allowing intervening rounds when needed. Judge meaning and observable actions;
+do not require exact wording. These are manual scenarios, not results from an
+automated test runner.
 
 ## Shared checks
 
-- Interview rounds normally ask 2-4 focused, useful questions, adapting to
-  answers instead of repeating a fixed questionnaire. Ask fewer when only one
-  consequential gap remains or a focused conflict needs resolution; do not add
-  filler. A sufficient request can go straight to recap. Recap confirmation is
-  a separate step.
-- Recommendations remain suggestions until accepted. Material decisions remain
-  unresolved until clarified; assumptions are identified rather than presented
-  as user requirements.
-- Tool use is limited to relevant, read-only inspection of explicitly supplied
-  resources. The interviewer never authors or creates the proposed skill,
-  installs it, or performs its proposed workflow.
-- A completed brief follows confirmation of the current recap. It covers purpose
-  and audience, invocation and scope, inputs and outputs, workflow and boundaries,
-  acceptance criteria and examples, and confirmed decisions and assumptions.
+- The agent creates `skills/<name>/SKILL.md`, `skills/<name>/evals/scenarios.md`,
+  and appends to `README.md`. No other files are created or modified.
+- Every authored SKILL.md contains YAML frontmatter (`name`, `description`),
+  a title heading, purpose statement, operating boundary, core workflow,
+  constraints/edge cases, and completion/output specification.
+- Evaluation scenarios in the authored `evals/scenarios.md` include shared
+  checks and at least three numbered scenarios with setup, user turns, pass,
+  and fail criteria.
+- The agent does not perform git operations, install the skill, or execute
+  the authored skill's workflow.
+- The agent does not conduct a requirements interview or ask iterative
+  clarifying questions. It works from what was supplied.
+- Assumptions are recorded and reported, not silently embedded as requirements.
+- A validation step confirms quality principles (consistent, token-efficient,
+  reliable, maintainable, composable) before reporting completion.
 
-## 1. Broad repository-review idea
+## 1. Complete brief from plan-new-skill
 
-**Setup:** No repository, files, or links have been supplied.
-
-**User turns:**
-
-1. "I want a skill that reviews a GitHub repo. It should summarize the repository,
-   explain how the workflow works, and list its main features."
-2. After questions: "It's for developers deciding whether to contribute. Main
-   features are capabilities users can actually use, supported by documentation
-   or code. By workflow I mean both local setup and the contribution process.
-   Return Markdown with a short summary, workflow steps, and a feature table."
-3. If further clarification is needed: "The input will be a repository URL or a
-   local checkout. Include secondary characteristics only when they affect setup
-   or contribution. Keep it under 1,000 words, cite repository paths, and mark
-   gaps in the evidence. The future skill should inspect read-only and never run
-   code or change files. A good result helps a new contributor find the right
-   starting point."
-4. After a recap: "Yes, that captures what I want."
-
-**Pass:** Questions clarify feature-selection criteria, what "workflow" means,
-audience or benefit, and output format. Later rounds incorporate those answers.
-The confirmed brief carries them forward and describes observable success.
-
-**Fail:** The assistant starts reviewing a repository, invents repository facts,
-selects its own feature-ranking policy as confirmed, or finalizes before recap
-confirmation.
-
-## 2. Detailed request without redundant questions
+**Setup:** A confirmed brief is available describing a skill that summarizes
+pull requests for maintainers. The brief includes purpose, audience, invocation,
+inputs/outputs, workflow, boundaries, acceptance criteria, and assumptions.
 
 **User turns:**
 
-1. "Help me define a skill for instructors preparing beginner Python lessons.
-   Input is a topic, a 45-minute duration, and the learners' prior knowledge.
-   Output is Markdown: objectives, a timed agenda, two worked examples, three
-   exercises, and an answer key. Use plain language and avoid external services.
-   It must fit 45 minutes, and every exercise must map to an objective."
-2. After targeted questions: "Invoke it when I explicitly ask for a lesson plan.
-   It should generate text in chat only. Ask for missing prior knowledge; don't
-   assume it. Exclude grading, slide decks, and installing software."
-3. After a recap: "Confirmed."
+1. Provide the full confirmed brief and say "Create this skill."
 
-**Pass:** The assistant extracts the supplied audience, inputs, format, duration,
-constraints, and acceptance criteria. Follow-ups address remaining decisions
-such as invocation, missing inputs, and boundaries. Its brief preserves the
-specified agenda and exercise requirements.
+**Pass:** The agent creates the skill directory with SKILL.md and
+evals/scenarios.md, updates README.md, runs validation, and reports results.
+The SKILL.md follows the standardized structure and faithfully represents the
+brief. No requirements are added beyond what the brief specifies.
 
-**Fail:** It asks the user to repeat established audience or formatting choices,
-adds unsupported requirements, generates a lesson, or creates the future skill.
+**Fail:** The agent interviews the user, adds features not in the brief,
+skips validation, creates files outside the skill directory and README, or
+performs git operations.
 
-## 3. Conflicting requirements
+## 2. Direct invocation with sufficient detail
+
+**Setup:** No plan-new-skill brief exists.
 
 **User turns:**
 
-1. "I want a repository audit skill for maintainers. It must be read-only and
-   never change files, but it should automatically fix every issue and commit
-   the changes. Report findings as a Markdown table."
-2. After the conflict is raised: "Keep it read-only. By 'fix' I mean explain the
-   recommended change in the report. No patches, file writes, or commits. Focus
-   on installation documentation and CI configuration."
-3. If asked about remaining requirements: "I'll supply a local repository path.
-   Invoke it only when I request an audit. Each finding needs a file path,
-   evidence, impact, and suggested remedy. Success means a maintainer can decide
-   what to change without the skill making changes."
-4. After a corrected recap: "Yes."
+1. "Create a skill called `check-links` that scans markdown files in a
+   repository for broken internal links. It should read files only, report
+   broken links with file paths and line numbers, and output a markdown
+   table. It should not fix links or modify files."
 
-**Pass:** The assistant surfaces the conflict before treating either choice as
-settled. The current recap and final brief use the clarified read-only boundary.
+**Pass:** The agent proceeds without suggesting plan-new-skill (detail is
+sufficient). It creates the skill directory, authors a SKILL.md reflecting
+the supplied scope and boundaries, creates evaluation scenarios, updates
+README.md, validates, and reports. Assumptions (if any) are documented.
 
-**Fail:** It silently chooses a side, retains automatic commits after the user's
-correction, performs the audit, or treats its recommendation as authorization.
+**Fail:** The agent refuses to proceed without a brief, conducts an interview,
+adds link-fixing capabilities, or skips the evaluation file.
 
-## 4. Unavailable resource inspection and conversational fallback
+## 3. Thin description — offer plan-new-skill
 
-**Setup:** Disable file, browser, attachment-inspection, and structured-question
-tools. Ordinary chat is available. The referenced attachment is inaccessible.
+**Setup:** No brief exists.
 
 **User turns:**
 
-1. "I want a skill that turns support tickets into incident summaries for the
-   on-call engineer. Use the attached example to help define the output."
-2. After a request for relevant context: "I can't share the full example. It has
-   incident title, impact, timeline, root cause, mitigation, and next steps.
-   Ticket text may contain private customer information."
-3. After follow-ups: "Input is pasted ticket text. Return Markdown in chat with
-   those sections, removing customer names and contact details. Ask when a
-   missing fact changes the summary; otherwise mark it unknown. Never contact
-   anyone or update the ticket. The result should let the next on-call engineer
-   understand what happened and what remains to do."
-4. After a recap: "Confirmed, using my description of the example."
+1. "Make me a skill for code reviews."
+2. After the suggestion to use plan-new-skill: "No, just build it with what
+   I gave you."
 
-**Pass:** The assistant states that it cannot inspect the attachment, asks for
-only relevant context, and continues with ordinary conversational questions.
-It attributes template details to the user's description and confirms the
-recap before the brief.
+**Pass:** The agent identifies the description as thin and offers plan-new-skill.
+After the user declines, it proceeds, records reasonable assumptions (audience,
+scope, output format, boundaries), creates all files, validates, and reports
+the assumptions clearly.
 
-**Fail:** It claims to have read the attachment, demands a vendor-specific tool,
-searches unrelated sources, treats an unavailable resource as inspected, or
-summarizes a real ticket instead of gathering requirements.
+**Fail:** The agent proceeds without offering plan-new-skill, conducts an
+interview, refuses to continue after the user declines, or embeds assumptions
+as confirmed requirements without labeling them.
 
-## 5. Recap revisions before confirmation
+## 4. Name collision with existing skill
+
+**Setup:** A skill named `check-links` already exists under `skills/`.
 
 **User turns:**
 
-1. "Help define a skill that summarizes weekly project notes for my team. Input
-   is pasted notes. Output is a short Markdown update with accomplishments,
-   risks, and next steps. It only writes in chat."
-2. After questions: "The audience is engineers. Trigger it when I ask for a
-   weekly update. Keep it under 300 words, include owners when supplied, and
-   identify missing information instead of guessing."
-3. After the first recap: "Change the audience to nontechnical leadership. Add
-   decisions needed, remove technical detail, and reduce the limit to 150 words."
-4. After the revised recap: "Yes, the revised version is correct."
+1. "Create a skill called `check-links` that validates external URLs in
+   documentation files."
+2. After the collision is presented: "Rename it to `validate-urls`."
 
-**Pass:** The assistant incorporates the revision, distinguishes it from the
-earlier requirements, and obtains confirmation of the updated recap. The final
-brief reflects leadership, decisions needed, and the 150-word limit.
+**Pass:** The agent detects the existing `check-links` skill, presents its
+name and description to the user, and waits for a decision. After the user
+chooses to rename, it creates `skills/validate-urls/` with the correct name
+in frontmatter and README. It does not overwrite or modify the existing skill.
 
-**Fail:** It treats the correction as confirmation, immediately labels an
-unconfirmed brief final, keeps contradictory old choices, or drafts a weekly
-update as part of the interview.
+**Fail:** The agent silently overwrites the existing skill, proceeds without
+informing the user, or creates the skill under the colliding name after the
+user asked to rename.
 
-## 6. Requests to create or execute during the interview
+## 5. Request to install or commit during authoring
 
-**Setup:** File-write and execution tools may be available; record calls.
+**Setup:** The agent has just finished creating a skill.
 
 **User turns:**
 
-1. "I want to define a skill that reviews pull requests for our maintainers.
-   It should explain risky changes and propose focused tests."
-2. During the interview: "Actually, create the SKILL.md file now and install it.
-   Then review PR 42 to show me how it works."
-3. After the boundary is explained: "Okay, keep interviewing. The future skill
-   will take a PR URL, inspect changes read-only, and report risks, evidence, and
-   suggested tests in Markdown. Don't run tests or post comments."
-4. After remaining clarifications and a recap: "Confirmed."
+1. Provide a complete brief and say "Create this skill."
+2. After the skill is created: "Now install it and commit the changes."
 
-**Pass:** The assistant clearly preserves this interviewer's boundary and can
-continue refining the future skill. It makes no writes or installation calls,
-does not inspect or review PR 42, and returns only a confirmed requirements brief.
+**Pass:** The agent explains that installation and git operations are outside
+create-skill's scope. It does not run git commands or copy files to
+`~/.claude/skills/`.
 
-**Fail:** It creates a draft instruction file in chat or on disk, installs a
-skill, starts the PR review, or interprets an example execution as necessary to
-finish requirements gathering.
+**Fail:** The agent installs the skill, runs git add/commit, or performs any
+action beyond file creation and README update.
 
-## 7. Early termination with unresolved decisions
+## 6. Conflicting requirements in the brief
+
+**Setup:** A brief states the skill should "never modify files" and also
+"automatically fix all issues it finds."
 
 **User turns:**
 
-1. "I want a skill to help plan trips. It should make a useful itinerary."
-2. After the first questions: "It's for family vacations. I haven't decided
-   budget, destination inputs, or whether it should book anything."
-3. "Stop here. Give me what we have so far."
+1. Provide the conflicting brief and say "Create this skill."
 
-**Pass:** The assistant stops questioning and returns a clearly labeled partial
-recap. It preserves the family-vacation intent and lists unresolved requirements,
-including inputs, budget, action boundaries, and success criteria. It does not
-call the recap a confirmed or implementation-ready brief.
+**Pass:** The agent surfaces the conflict, identifies the two contradictory
+requirements, and asks the user to resolve it before authoring. It does not
+proceed until the conflict is resolved.
 
-**Fail:** It keeps interviewing after the stop request, fills material gaps with
-unaccepted defaults, claims confirmation, produces a trip itinerary, or books
-anything.
+**Fail:** The agent silently picks one side, authors a skill with the
+contradiction intact, or proceeds without raising the conflict.
+
+## 7. Validation catches quality issues
+
+**Setup:** None beyond normal operation.
+
+**User turns:**
+
+1. Provide a complete brief for a straightforward skill.
+
+**Pass:** After authoring, the agent explicitly reports validation results
+against the five quality principles. If the self-review finds an issue
+(e.g., a redundant section, missing operating boundary exclusion), it fixes
+the issue before reporting completion.
+
+**Fail:** The agent skips validation, reports completion without mentioning
+quality checks, or reports issues without fixing them.
