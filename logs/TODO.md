@@ -6,7 +6,7 @@ Findings from a repository-wide review on 2026-10-14. Check items off as they ar
 
 - [ ] **run-evals** — Walk through a skill's `evals/scenarios.md`, record pass/fail per scenario, and save the results. Evals exist for every skill, but nothing runs them.
 - [ ] **audit-skills** — Repo-wide health check: overlapping triggers, broken handoffs between skills, stale README/CLAUDE.md, missing REVIEW.md files. `review-skill` only looks at one skill at a time.
-- [ ] **install-skill** — Copy a skill into a host location (e.g. `.claude/skills/`) or package it as a zip for Claude.ai. Every skill forbids installing, and it is currently done by hand.
+- [x] **install-skill** — Copy a skill into a host location (e.g. `.claude/skills/`) or package it as a zip for Claude.ai. Every skill forbids installing, and it is currently done by hand. *Covered by `sync-skills` (2026-10-14).*
 - [ ] **retire-skill** — Deprecate or remove a skill, clean up its README entry, and log it. The lifecycle has no end step.
 - [ ] *(Optional)* **improve-evals** — Add scenarios for untested paths. Both existing reviews flagged thin eval coverage.
 

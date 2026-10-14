@@ -14,7 +14,7 @@ A repository of reusable AI skill definitions — structured prompt instructions
 
 ## Skill lifecycle
 
-The four skills form a pipeline. Each step is invoked separately; no skill runs another without the user's agreement.
+Four skills form a pipeline for building and maintaining skills. Each step is invoked separately; no skill runs another without the user's agreement. A fifth skill, `sync-skills`, installs and updates the results (see [Using a skill](#using-a-skill)).
 
 ```
 plan-new-skill  →  create-skill  →  review-skill  →  update-skill
@@ -36,6 +36,8 @@ skills/
     REVIEW.md             # Optional: latest quality review written by review-skill
     evals/
       scenarios.md        # Manual behavioral evaluation scenarios
+docs/
+  skill-frontmatter.md    # Draft frontmatter schema for skills
 logs/
   NEW.md                  # Creation log written by create-skill, newest entry first
   UPDATES.md              # Change log written by update-skill, newest entry first
@@ -46,7 +48,7 @@ A skill is fully specified by its `SKILL.md`. There is no code, configuration, o
 
 ## Using a skill
 
-Each skill folder is self-contained. Copy `skills/<skill-name>/` to wherever your assistant loads skills or instructions:
+Each skill folder is self-contained. Use `sync-skills` to install, update, or package skills from this repository. It shows which installed skills are out of date and never overwrites local edits. To install by hand instead, copy `skills/<skill-name>/` to wherever your assistant loads skills or instructions:
 
 - **Claude Code** — copy the folder into a skills directory (for example `.claude/skills/` in a project, or the user-level skills directory) and invoke it with `/<skill-name>` or by describing the task.
 - **Claude.ai** — zip the skill folder and upload it as a custom skill.

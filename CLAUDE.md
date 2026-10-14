@@ -15,6 +15,8 @@ skills/
     REVIEW.md         # Optional: latest quality review written by review-skill
     evals/
       scenarios.md    # Behavioral evaluation scenarios for manual testing
+docs/
+  skill-frontmatter.md  # Draft frontmatter schema for skills
 logs/
   NEW.md              # Creation log written by create-skill, newest entry first
   UPDATES.md          # Change log written by update-skill, newest entry first
@@ -25,12 +27,13 @@ Each skill is a self-contained directory under `skills/`. The SKILL.md file is t
 
 ## Current Skills
 
-The skills form a pipeline: plan-new-skill → create-skill → review-skill → update-skill. Each step is invoked separately; no skill runs another without the user's agreement.
+Four skills form a pipeline: plan-new-skill → create-skill → review-skill → update-skill. Each step is invoked separately; no skill runs another without the user's agreement. sync-skills sits outside the pipeline and installs or updates skills in a host.
 
 - **plan-new-skill** — Conducts an adaptive requirements interview to refine a new skill idea into a confirmed brief. Interview-only; does not create files. Routes changes to existing skills to update-skill.
 - **create-skill** — Authors a complete skill directory (SKILL.md, evals/scenarios.md) from a brief or description, updates README.md, logs the creation in logs/NEW.md, validates against quality principles, and offers review-skill. No git or installation.
 - **review-skill** — Reviews one existing skill and writes its REVIEW.md (scores, scope analysis, prioritized improvements, cost and runtime estimates, reliability, workflow diagram). Read-only toward the reviewed skill.
 - **update-skill** — Proposes prioritized updates from REVIEW.md or user requests, applies only approved items, logs them in logs/UPDATES.md, and either reruns review-skill or marks REVIEW.md stale.
+- **sync-skills** — Downloads skills from a source repository (GitHub by default, or a local checkout), shows each installed skill's status, and installs, updates, or removes only the skills the user selects. Never overwrites local edits; packages skills for Claude.ai or ChatGPT. No git operations.
 
 ## Skill Authoring Conventions
 
