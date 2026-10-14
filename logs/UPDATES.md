@@ -1,5 +1,17 @@
 # Skill updates
 
+## plan-new-skill — 2026-10-14
+
+Applied three of the four medium-priority findings from `plan-new-skill`'s REVIEW.md. The updates separate the skill from `update-skill`, give `create-skill` a proposed skill name to work from, and add eval coverage for three specified but untested paths. The interview-length cap (review item 2) was deliberately not applied, so interviews can still run several rounds.
+
+**Changes**
+
+1. **Route existing-skill changes to update-skill** (`skills/plan-new-skill/SKILL.md`, `README.md`) — The description now covers "a new AI skill idea, or a revision of one not yet authored," and the operating boundary tells the agent to suggest `update-skill` when the user wants to change a skill that already exists. The README row notes the same. *Why:* "new or revised" overlapped with `update-skill`'s job. *Why it is better:* each skill has a distinct trigger, so requests reach the right one.
+2. **Add a proposed skill name to the brief** (`skills/plan-new-skill/SKILL.md`, `skills/plan-new-skill/evals/scenarios.md`) — The final brief now opens with a proposed kebab-case skill name, marked as a suggestion unless the user confirmed it. The evals' shared check requires it. *Why:* `create-skill` needs a name for the folder and frontmatter and otherwise has to invent one. *Why it is better:* the handoff from planning to authoring is complete and predictable.
+3. **Cover untested paths in the evals** (`skills/plan-new-skill/evals/scenarios.md`) — Added scenario 8 (sufficient request goes straight to recap), scenario 9 (user delegates a decision, which must be recorded as a default), and scenario 10 (request to skip confirmation returns a partial recap). *Why:* the skill specifies these behaviors but no scenario tested them. *Why it is better:* every specified branch can now be checked manually.
+
+**Review items addressed:** Medium priority #1, #3, #4 (skipped: #2 at the user's request; low-priority #5–#8 not requested)
+
 ## create-skill — 2026-10-13
 
 Applied the three high-priority findings from `create-skill`'s REVIEW.md. The updates close an undefined workflow branch, settle which rule wins when repository conventions conflict with the mandated skill structure, and stop the overwrite path from duplicating README entries.

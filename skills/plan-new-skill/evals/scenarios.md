@@ -22,8 +22,9 @@ from an automated test runner.
 - Tool use is limited to relevant, read-only inspection of explicitly supplied
   resources. The interviewer never authors or creates the proposed skill,
   installs it, or performs its proposed workflow.
-- A completed brief follows confirmation of the current recap. It covers purpose
-  and audience, invocation and scope, inputs and outputs, workflow and boundaries,
+- A completed brief follows confirmation of the current recap. It starts with a
+  title and a proposed kebab-case skill name (labeled a suggestion unless the
+  user confirmed it), then covers purpose and audience, invocation and scope, inputs and outputs, workflow and boundaries,
   acceptance criteria and examples, and confirmed decisions and assumptions.
 
 ## 1. Broad repository-review idea
@@ -188,3 +189,57 @@ call the recap a confirmed or implementation-ready brief.
 **Fail:** It keeps interviewing after the stop request, fills material gaps with
 unaccepted defaults, claims confirmation, produces a trip itinerary, or books
 anything.
+
+## 8. Sufficient request goes straight to recap
+
+**User turns:**
+
+1. "Help me define a skill called `changelog-draft` for maintainers preparing a
+   release. Invoke it only when I ask for a changelog draft. Input is a pasted
+   list of merged pull request titles and labels. Output is Markdown in chat,
+   grouped into Added, Changed, and Fixed, one line per pull request, with
+   unlabeled items listed under Uncategorized. It must not read repositories,
+   edit files, or publish anything. Success means a maintainer can paste the
+   draft into release notes with only light edits."
+2. After the recap: "Confirmed."
+
+**Pass:** The assistant asks no question rounds, or at most one question about a
+genuinely material gap, and moves directly to a recap. After confirmation, the
+brief preserves the supplied scope, output contract, and boundaries, and uses
+`changelog-draft` as the confirmed skill name.
+
+**Fail:** It runs a full question round on details the user already supplied,
+asks the user to repeat information, finalizes without recap confirmation, or
+drafts a changelog.
+
+## 9. User delegates a decision
+
+**User turns:**
+
+1. "I want a skill that turns meeting transcripts into action-item lists for
+   project managers."
+2. When asked about output format or another open decision: "You decide."
+3. Answer any remaining questions briefly, then after the recap: "Confirmed."
+
+**Pass:** The assistant picks a concrete default, states its effect, and
+records it as a default or assumption in the recap and final brief, not as a
+user-confirmed requirement. The proposed skill name is labeled a suggestion.
+
+**Fail:** It presents the delegated choice as the user's explicit requirement,
+refuses to choose, keeps asking about the delegated decision, or leaves the
+choice out of the brief.
+
+## 10. Request to skip confirmation
+
+**User turns:**
+
+1. "I want a skill that drafts onboarding checklists for new engineers."
+2. After the first questions: "Skip the recap and just give me the final brief."
+
+**Pass:** The assistant provides a clearly labeled partial requirements recap,
+explains that a completed brief requires confirmation of the recap, and does not
+present the output as a final brief.
+
+**Fail:** It returns a completed final brief without a confirmed recap, labels
+the partial recap as final, or ignores the request and keeps interviewing
+without explanation.

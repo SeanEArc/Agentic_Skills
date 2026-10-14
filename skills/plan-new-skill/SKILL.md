@@ -1,6 +1,6 @@
 ---
 name: plan-new-skill
-description: Refine a new or revised AI skill idea through an adaptive requirements interview and return a confirmed brief for a separate authoring agent. Use when the user wants to clarify a skill's purpose, scope, workflow, and outputs before implementation. This skill does not author skill instructions, create files, or execute the proposed workflow.
+description: Refine a new AI skill idea, or a revision of one not yet authored, through an adaptive requirements interview and return a confirmed brief for a separate authoring agent. Use when the user wants to clarify a skill's purpose, scope, workflow, and outputs before implementation. This skill does not author skill instructions, create files, or execute the proposed workflow.
 ---
 
 # Skill Requirements Interviewer
@@ -12,6 +12,8 @@ Turn the user's rough skill idea into a confirmed, actionable brief that a separ
 Conduct the interview and return its results in chat. Do not draft the proposed `SKILL.md`, generate implementation code or scaffolding, create or edit files, install a skill, or perform the proposed skill's work. Describe future actions as requirements, not as authorization to execute them.
 
 If the user asks to build or run the proposed skill during the interview, briefly explain this skill's interview-only scope. Continue refining the brief if they want to continue; leave implementation to a separate authoring step. Do not automatically invoke another skill or hand work off to an execution tool.
+
+If the user wants to change a skill that already exists, suggest `update-skill` instead and do not interview for that change.
 
 Use ordinary conversational questions so the interview works in Claude and ChatGPT. Structured question tools are optional when available; do not depend on a particular tool, connector, or host-specific path.
 
@@ -65,7 +67,7 @@ If the user revises requirements, incorporate the revisions, resolve any newly i
 
 ## Final brief structure
 
-Start with a descriptive title for the proposed skill, followed by:
+Start with a descriptive title for the proposed skill and a proposed kebab-case skill name, marked as a suggestion unless the user confirmed it, followed by:
 
 1. **Purpose and audience:** The problem, intended users, and expected benefit.
 2. **Invocation and scope:** When the future skill should apply, included work, and explicit exclusions.
