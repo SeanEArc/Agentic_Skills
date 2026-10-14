@@ -17,7 +17,7 @@ Create files and read existing files in the repository. Do not perform git opera
 
 Accept a confirmed brief from plan-new-skill or a direct description from the user. Evaluate whether the input contains enough information to author a skill: at minimum, a clear purpose, intended behavior, and scope.
 
-If the input is thin — missing purpose, behavior, or scope — offer the user the option to use plan-new-skill to develop a complete brief. If the user declines, proceed with the supplied details and record reasonable assumptions. Do not interview the user or ask iterative clarifying questions.
+If the input is thin — missing purpose, behavior, or scope — offer the user the option to use plan-new-skill to develop a complete brief. If the user accepts, stop without creating files and tell them to return with the confirmed brief. If the user declines, proceed with the supplied details and record reasonable assumptions. Do not interview the user or ask iterative clarifying questions.
 
 ### 2. Check for name collisions
 
@@ -25,7 +25,7 @@ Before creating files, check whether a skill with the same name already exists u
 
 ### 3. Inspect repository conventions
 
-Read existing skills in the repository to identify structural patterns, section ordering, tone, and frontmatter conventions. Match these conventions in the new skill. If no other skills exist, follow the standard structure defined below.
+Read existing skills in the repository to identify structural patterns, section ordering, tone, and frontmatter conventions. Match these conventions in the new skill for tone, wording, and formatting. The step 4 structure is mandatory and takes precedence over any conflicting convention. If no other skills exist, follow the step 4 structure alone.
 
 ### 4. Author the skill directory
 
@@ -41,7 +41,8 @@ Follow this structure:
 4. **Operating boundary** — what the skill does and explicitly does not do. State permitted and prohibited actions clearly.
 5. **Core workflow sections** — step-by-step behavior organized into logical phases with subsections. Use imperative language describing what the agent does, not what it could do.
 6. **Constraints and edge cases** — how to handle missing information, ambiguous requests, conflicts, and boundary situations.
-7. **Completion and output specification** — what the final deliverable looks like and how the skill signals completion.
+7. **Output specification** — what the final deliverable looks like (format, layout, required fields).
+8. **Completion** — what the skill reports to the user and how it signals that it is done.
 
 #### `skills/<skill-name>/evals/scenarios.md`
 
@@ -59,7 +60,7 @@ Write scenarios that test the authored skill's behavior, not create-skill's beha
 
 ### 5. Update README.md
 
-Append an entry for the new skill to the skills section of README.md. If no skills section exists, create one. Each entry includes the skill name and a concise, professional description of what it does. Keep the README easy to scan — use a consistent format matching any existing entries.
+If README.md already has an entry for this skill (for example, after an overwrite), replace it; otherwise append an entry to the skills section. If no skills section exists, create one. Each entry includes the skill name and a concise, professional description of what it does. Keep the README easy to scan — use a consistent format matching any existing entries.
 
 ### 6. Validate the authored skill
 

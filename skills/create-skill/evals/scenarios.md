@@ -12,10 +12,11 @@ automated test runner.
 ## Shared checks
 
 - The agent creates `skills/<name>/SKILL.md`, `skills/<name>/evals/scenarios.md`,
-  and appends to `README.md`. No other files are created or modified.
+  and adds one `README.md` entry for the skill (replacing any existing entry
+  for it, never duplicating). No other files are created or modified.
 - Every authored SKILL.md contains YAML frontmatter (`name`, `description`),
   a title heading, purpose statement, operating boundary, core workflow,
-  constraints/edge cases, and completion/output specification.
+  constraints/edge cases, output specification, and completion.
 - Evaluation scenarios in the authored `evals/scenarios.md` include shared
   checks and at least three numbered scenarios with setup, user turns, pass,
   and fail criteria.
