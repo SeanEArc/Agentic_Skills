@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"$HOME/.claude/skills/create-skill\" && cp \"C:/Users/seana/Desktop/Personal-Coding/Agentic-Skills/skills/create-skill/SKILL.md\" \"$HOME/.claude/skills/create-skill/SKILL.md\")"
+    ]
+  }
+}
