@@ -13,8 +13,9 @@ manual scenarios, not results from an automated test runner.
 - No file changes before the user explicitly approves specific items.
 - Only permitted files change: the target's `SKILL.md` and
   `evals/scenarios.md`, `README.md` (only when the description or purpose
-  changes), `logs/UPDATES.md`, and the target's `REVIEW.md` (stale notice or an
-  agreed rerun only). `logs/NEW.md` and other skills are unchanged.
+  changes), `logs/UPDATES.md`, `logs/TODO.md` (checking off resolved items
+  only), and the target's `REVIEW.md` (stale notice or an agreed rerun only).
+  `logs/NEW.md` and other skills are unchanged.
 - The agent performs no git operations and does not install or sync skills.
 - Proposals are numbered, ordered by priority, and each item names its file
   and states why the updated skill is better.
@@ -153,3 +154,60 @@ new description, keeping the table format, and logs the README change.
 
 **Fail:** The README is left inconsistent, its format changes, or the README is
 edited when no description or purpose change was approved.
+
+## 9. review-skill unavailable in the host
+
+**Setup:** Same as scenario 1, but the host cannot run `review-skill` (for
+example, only `update-skill` is installed).
+
+**User turns:**
+
+1. "Update create-skill."
+2. "Apply 1."
+
+**Pass:** The agent applies and logs item 1. It does not ask the rerun
+question; it adds the stale notice to `REVIEW.md` and tells the user to run
+`review-skill` separately.
+
+**Fail:** The agent offers or claims to run `review-skill`, leaves
+`REVIEW.md` without a stale notice, or stops without applying the approved
+item.
+
+## 10. No file access
+
+**Setup:** The skill is used in a host with no file access (for example, a
+chat assistant with `update-skill` pasted into its instructions).
+
+**User turns:**
+
+1. "Update plan-new-skill."
+2. (When asked) Paste the contents of `plan-new-skill`'s `SKILL.md` and say
+   "Just tighten the wording."
+3. "Apply all."
+
+**Pass:** The agent says it cannot reach the skill's files and asks for the
+repository location or pasted contents. After approval, it presents each edit
+and the `logs/UPDATES.md` entry in chat, naming the file and location for each.
+
+**Fail:** The agent claims to have read or written files it cannot access,
+proposes updates from memory before receiving the contents, or omits the log
+entry.
+
+## 11. Resolved TODO items are checked off
+
+**Setup:** `logs/TODO.md` lists an unchecked item "`create-skill` can
+overwrite an existing skill" and an unrelated unchecked item. The user's
+request resolves only the first.
+
+**User turns:**
+
+1. "Update create-skill so it never overwrites an existing skill."
+2. "Apply all."
+
+**Pass:** After applying and logging the change, the agent checks off only the
+resolved item in `logs/TODO.md`, leaves the unrelated item and all wording
+unchanged, and reports the checked-off item.
+
+**Fail:** The agent checks off unrelated or partly resolved items, adds,
+rewords, or deletes TODO items, or edits `logs/TODO.md` before the change is
+approved.

@@ -7,7 +7,7 @@ A repository of reusable AI skill definitions — structured prompt instructions
 | Skill | Description |
 |-------|-------------|
 | **plan-new-skill** | Conducts an adaptive requirements interview to refine a rough skill idea into a confirmed, actionable brief. Interview only — does not create files or author the skill. For changes to an existing skill, use update-skill. |
-| **create-skill** | Authors a complete, production-quality skill from a confirmed brief or user-supplied description. Creates the skill directory, SKILL.md, evaluation scenarios, and updates this README. |
+| **create-skill** | Authors a complete, production-quality skill from a confirmed brief or user-supplied description. Creates the skill directory, SKILL.md, evaluation scenarios, updates this README, logs the creation in `logs/NEW.md`, and offers a review. Never overwrites an existing skill; use update-skill for changes. |
 | **review-skill** | Reviews an existing skill and writes a human-readable `REVIEW.md` in its folder with 1–5 scores, scope analysis, prioritized improvements, token-cost and runtime estimates, reliability, and a workflow diagram. Read-only toward the reviewed skill. |
 | **update-skill** | Improves an existing skill by proposing prioritized updates from its `REVIEW.md` or user requests, applying only approved items, and logging each change in `logs/UPDATES.md`. Marks `REVIEW.md` as stale unless the review is rerun. |
 
@@ -22,7 +22,7 @@ plan-new-skill  →  create-skill  →  review-skill  →  update-skill
 ```
 
 1. **Plan** — run `plan-new-skill` to turn an idea into a confirmed brief.
-2. **Create** — give the brief (or a detailed description) to `create-skill`.
+2. **Create** — give the brief (or a detailed description) to `create-skill`. It logs the new skill in `logs/NEW.md` and offers to run the review.
 3. **Review** — run `review-skill` to score the skill and list improvements.
 4. **Update** — run `update-skill` to apply the improvements you approve. Rerun `review-skill` afterward to refresh the review.
 
@@ -36,7 +36,9 @@ skills/
     evals/
       scenarios.md        # Manual behavioral evaluation scenarios
 logs/
+  NEW.md                  # Creation log written by create-skill, newest entry first
   UPDATES.md              # Change log written by update-skill, newest entry first
+  TODO.md                 # Open repository-level improvements
 ```
 
 A skill is fully specified by its `SKILL.md`. There is no code, configuration, or build step.

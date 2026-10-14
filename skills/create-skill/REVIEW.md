@@ -4,32 +4,28 @@
 
 ## Summary
 
-`create-skill` turns a confirmed brief from `plan-new-skill`, or a direct description, into a finished skill directory: `SKILL.md`, `evals/scenarios.md`, and a README entry. It is the authoring step of the repository's plan → create → review → update pipeline. Use it whenever someone wants a new skill built rather than designed.
+`create-skill` turns a confirmed brief from `plan-new-skill`, or a direct description, into a finished skill directory. It writes `SKILL.md` and `evals/scenarios.md`, adds a README entry, logs the creation in `logs/NEW.md`, and offers a review. It is the authoring step of the repository's plan → create → review → update pipeline. Use it whenever someone wants a new skill built rather than designed or changed.
 
 ## Scores
 
-| Dimension | Score | Justification |
-|---|---|---|
-| Scope | 5 | One clear job: author a skill directory. Exclusions for interviewing, git, installation, and running the authored skill are explicit, and both outcomes of the `plan-new-skill` offer are now defined. |
-| Human readability | 5 | The numbered workflow headings follow the order of work. The mandated `SKILL.md` structure is a numbered list, and the completion report is a short checklist. |
-| Agent executability | 4 | Directives are imperative, precedence between conventions and structure is stated, and completion is defined. An agent still has to guess how to name a skill when no name is given and how to judge "token-efficient" and "reliable" during validation. |
-| **Overall** | **4** | Ready to use. The remaining issues are minor edge-case gaps and thin eval coverage, not structural flaws. |
+| Area | Score | Justification |
+|------|-------|---------------|
+| Scope | 5 | Authoring only. Planning goes to `plan-new-skill`, changes to existing skills go to `update-skill`, and "Never overwrite an existing skill" is explicit. |
+| Human readability | 4 | The numbered workflow (1–8) and the mandated structure in step 4 are easy to follow. The fallback for hosts without file access is packed into one long bullet. |
+| Agent executability | 4 | Steps are imperative and completion is defined. A few branches are underspecified: what "fix" means when the validation finds an overlap, and how the no-access fallback interacts with step 2. |
+| **Overall** | **4** | Ready to use. The remaining issues are edge-case gaps and missing eval coverage for the new fallback paths, not structural flaws. |
 
 **Rubric**
-- **5** Excellent: ready to use; no meaningful issues.
-- **4** Good: minor issues that do not affect outcomes.
-- **3** Adequate: works, but issues cause occasional inconsistency or waste.
-- **2** Weak: significant gaps; results are often unreliable.
-- **1** Poor: unclear or unusable without major revision.
+
+- **5** Excellent — ready to use; no meaningful issues.
+- **4** Good — minor issues that do not affect outcomes.
+- **3** Adequate — works, but issues cause occasional inconsistency or waste.
+- **2** Weak — significant gaps; results are often unreliable.
+- **1** Poor — unclear or unusable without major revision.
 
 ## Scope analysis
 
-**Verdict: appropriate.**
-
-- The responsibility is focused. Step 1 says "Do not conduct a requirements interview," and the operating boundary excludes git, installation, and running the authored skill. That leaves file authoring and nothing else.
-- The trigger is precise: "Use when the user wants to build a new skill, not plan one." The handoff to `plan-new-skill` is one-way, and accepting the offer now ends the run ("stop without creating files and tell them to return with the confirmed brief").
-- Step 6, "Validate the authored skill," is a lightweight self-check that overlaps a little with `review-skill`. That is reasonable as a pre-delivery check, as long as it stays brief.
-- The "overwrite" choice in step 2 overlaps with `update-skill`, which is the repository's tool for changing an existing skill. Overwriting rebuilds the skill from scratch and skips that skill's approval and logging. See improvement 3.
+**Verdict: appropriate.** The skill has one responsibility: authoring a new skill from supplied requirements. The description's closing clause ("not plan one or change an existing one") and the operating boundary separate it cleanly from `plan-new-skill` and `update-skill`. Offering `review-skill` is a handoff, not overlap, because it only runs with consent.
 
 ## Areas for improvement
 
@@ -39,95 +35,75 @@ None.
 
 ### Medium priority
 
-1. **Workflow → 1: no rule for naming the skill.** Step 4 requires a kebab-case `name`, but nothing says what to do when the input has none (as in eval scenario 3, "Make me a skill for code reviews").
-   *Fix:* "If no name is supplied, derive a short kebab-case verb-noun name from the purpose and list it as an assumption."
-
-2. **Workflow → 1 and Constraints: permitted questions are not labeled as exceptions.** Step 1 bans "iterative clarifying questions," yet the skill requires asking about the `plan-new-skill` offer, name collisions, and conflicting requirements.
-   *Fix:* Add one line: "The only permitted questions are the plan-new-skill offer, a name-collision decision, and resolution of conflicting requirements."
-
-3. **Workflow → 2. Check for name collisions: overwrite bypasses `update-skill`.** When a collision is found, "overwrite" replaces an existing skill without the approval list and change log that `update-skill` provides.
-   *Fix:* When presenting a collision, mention that `update-skill` is the better route for revising the existing skill, and keep overwrite for full replacements.
-
-4. **Operating boundary / Completion: other skill lists go stale.** The boundary allows edits only to the skill directory and `README.md`, so any other repository file that lists skills, such as an agent instruction file, falls out of date after each new skill.
-   *Fix:* Add to Completion: "Remind the user to update any other repository files that list skills."
-
-5. **evals/scenarios.md: several paths are not covered.** There are no scenarios for accepting the `plan-new-skill` offer, choosing "overwrite" (README entry replaced, not duplicated), or choosing "cancel." Scenario 7 ("Validation catches quality issues") gives the agent no planted defect, so its pass condition is hard to observe.
-   *Fix:* Add those three scenarios. Rework scenario 7 to use a brief that invites a known issue, such as two sections that restate each other.
+1. **Step 7, Composable: "fix them" can conflict with "Do not add requirements."** If the validation finds that the new skill overlaps an existing one, step 7 says to fix the issue before reporting completion. Fixing an overlap usually means changing scope, which the last bullet of Constraints and edge cases forbids without the user's input.
+   *Fix:* "If validation finds a scope overlap with an existing skill, report it to the user and ask how to proceed instead of changing scope; fix other issues directly."
+2. **Constraints and edge cases: the no-file-access fallback is ambiguous.** It says to "ask the user for the repository location," but in a host with no file access a location doesn't help. The same bullet then covers file output and the name-collision check, so the order of these actions is unclear.
+   *Fix:* Split it into separate bullets. **Repository not found:** ask for its location. **No file access:** ask for the list of existing skill names for step 2 (skip the check and say so if the user can't provide them), then present every file's content in chat with its intended path.
+3. **evals/scenarios.md: the new fallback paths and one accept path are untested.** No scenario covers a host without file access, a host where `review-skill` can't be run (step 8), or the user accepting the `plan-new-skill` offer in step 1. Scenario 3 tests only the decline.
+   *Fix:* Add three scenarios: no file access (files returned in chat with their paths), `review-skill` unavailable (the user is told to run it separately and no offer is made), and accepting the `plan-new-skill` offer (no files are created, and the user is told to return with the brief).
 
 ### Low priority
 
-6. **Workflow → 6. Validate: "Token-efficient" and "Reliable" have no checkable criteria.** Self-validation against these principles will tend to report "pass."
-   *Fix:* Add one concrete check each, for example "no instruction appears in more than one section" and "no 'should' or 'may'; use imperatives." Keep it brief to avoid duplicating `review-skill`.
-
-7. **Completion: no handoff to `review-skill`.** `review-skill` expects to be offered after a skill is created, but `create-skill`'s Completion section does not mention it.
-   *Fix:* Add "Offer a review with review-skill once; proceed only if the user agrees."
-
-8. **Workflow → 3. Inspect repository conventions: reads every skill.** "Read existing skills in the repository" makes the read cost grow with each skill added.
-   *Fix:* "Read two or three representative skills."
-
-9. **evals/scenarios.md, scenario 5: a host-specific path.** The pass criterion mentions `~/.claude/skills/`, which conflicts with the repository convention that skills avoid host-specific paths.
-   *Fix:* Reword as "copy files to any skill installation location."
-
-10. **Frontmatter description: the word "production-quality."** It adds tokens to the always-loaded description without helping trigger selection.
-    *Fix:* Remove it, and update the README row to match.
+4. **Step 3: "Read existing skills" has no limit.** As the repository grows, reading every skill raises token cost without improving how well conventions are matched.
+   *Fix:* "Read the frontmatter and section headings of up to three existing skills."
+5. **Frontmatter description: longer than the rule it sets.** Step 4 requires the description to be "one to two sentences," but create-skill's own description has three.
+   *Fix:* Merge the last two sentences, for example "…and logs it in logs/NEW.md; use to build a new skill, not to plan or change one."
+6. **Step 1 and Constraints: "Do not interview the user" sits beside several required questions.** Step 2 (the collision decision), the conflict rule, and the no-access fallback all require questions. Readers may see a contradiction.
+   *Fix:* Reword step 1 to "Do not run a requirements interview; ask only the single decisions this skill specifies."
 
 ## Token cost
 
 *All figures are estimates at about 4 characters per token.*
 
-| Loading stage | Size | Estimated tokens |
-|---|---|---|
-| Frontmatter (always loaded) | ~290 chars | ~75 |
-| `SKILL.md` body (loaded on invocation) | ~6,350 chars | ~1,600 |
-| `evals/scenarios.md` | ~6,400 chars | 0 at runtime (not loaded by the skill) |
-
-**Runtime cost (qualitative):** Moderate. Step 3 reads the other skills in the repository (currently three other `SKILL.md` files, about 1,500 tokens each), and step 2 lists `skills/`. The agent then writes two new files plus a README edit and re-reads them for validation. Read-in context grows linearly with the number of skills in the repository.
+- **Frontmatter (always loaded):** about 85 tokens.
+- **SKILL.md body (loaded on invocation):** about 2,150 tokens.
+- **Runtime cost:** step 3 reads existing skills, about 2,000 tokens each, so about 8,000 tokens with the current four skills. The skill also writes two new files (often 4,000–6,000 tokens of output combined) and makes small edits to the README and `logs/NEW.md`.
 
 ## Estimated runtime
 
-*Estimates only.*
+*Estimates.*
 
-- **Typical rounds:** 1 turn with a complete brief. 2–3 turns when the input is thin (plan-new-skill offer), there is a name collision, or the brief has conflicting requirements.
-- **Agent processing time:** about 2–5 minutes (reading conventions, writing about 10–15 KB of content, validating).
-- **User wait / input time:** about 0–2 minutes, spent only on the offer, collision, or conflict questions.
+- **Turns:** 2–3 for a typical run: the request, authoring and the validation report, and the answer to the review offer. Add one turn for a thin-input offer or a name collision.
+- **Agent processing time:** about 1–4 minutes to read conventions, write the files, and validate.
+- **User wait time:** under 1 minute in most runs. Longer only when a collision or conflict needs a decision.
 
 ## Reliability
 
-**Rating: Good (4/5).**
+**Rating: 4 (Good).**
 
-- **Strengths:** Prohibited actions are explicit. Every branch of the `plan-new-skill` offer and the collision decision has a defined outcome. Precedence between repository conventions and the mandated structure is stated. README handling avoids duplicates on overwrite. Conflicting requirements are surfaced rather than resolved silently, and assumptions are kept separate from confirmed requirements.
-- **Findings:** Skill naming has no rule, the permitted questions are not labeled as exceptions, and two validation principles are subjective (improvements 1, 2, 6).
-- **Evals:** Present. Seven scenarios cover the main path, direct invocation, thin input with decline, collision with rename, out-of-scope requests, conflicting requirements, and validation. The accept-offer, overwrite, and cancel branches are not covered, and scenario 7 is hard to judge.
-- **Confidence:** Medium-high. The instructions are now complete on every branch, but the eval suite does not yet exercise the branches that were most recently defined.
+- **Strengths:** It never overwrites an existing skill. Structure has a clear precedence (the step 4 structure overrides repository conventions), README entries are replaced rather than duplicated, and the review offer requires consent.
+- **Gaps:** what "fix" means when validation finds an overlap (medium #1), and the ambiguous no-access fallback (medium #2).
+- **Evals:** present, 9 scenarios. They cover the main path, a direct description, thin input (decline only), both collision branches, install/commit requests, conflicting requirements, validation, and logging with the review offer. The fallback paths are not covered (medium #3).
+- **Confidence:** medium-high. The main paths are well tested; the newest branches are not.
 
 ## Workflow diagram
 
 ```mermaid
 flowchart TD
-    A[Receive brief or description] --> B{Enough detail?<br/>purpose, behavior, scope}
-    B -- No --> C[Offer plan-new-skill]
-    C --> D{User accepts?}
-    D -- Accepts --> Z0([Stop: no files created;<br/>return with confirmed brief])
-    D -- Declines --> E[Record reasonable assumptions]
-    B -- Yes --> F{Conflicting requirements?}
-    E --> F
-    F -- Yes --> G[Surface conflict, ask user to resolve]
-    G --> F
-    F -- No --> H{Name collides with existing skill?}
-    H -- Yes --> I[Show existing skill; wait for decision]
-    I --> J{Decision}
-    J -- Cancel --> Z1([Stop: nothing created])
-    J -- Rename --> K[Inspect repository conventions<br/>structure mandatory; conventions for tone and format]
-    J -- Overwrite --> K
-    H -- No --> K
-    K --> L[Write SKILL.md and evals/scenarios.md]
-    L --> M{README entry for this skill exists?}
-    M -- Yes --> M1[Replace entry]
-    M -- No --> M2[Append entry]
-    M1 --> N{Validation finds issues?}
-    M2 --> N
-    N -- Yes --> O[Fix issues] --> N
-    N -- No --> P([Report files, summary, assumptions, validation results])
-    P --> Q{User asks to install or commit?}
-    Q -- Yes --> R([Explain out of scope])
+    A[Brief or description] --> B{Input sufficient?}
+    B -- No --> B1[Offer plan-new-skill]
+    B1 -- Accepts --> Z1([End: return with brief; no files])
+    B1 -- Declines --> C
+    B -- Yes --> C{Conflicting requirements?}
+    C -- Yes --> C1[Surface conflict; ask user] --> C
+    C -- No --> D{Repository and files accessible?}
+    D -- Not found --> D1[Ask for location] --> D
+    D -- No file access --> D2[Output files in chat later; collision check needs names from user] --> E
+    D -- Yes --> E{Name already exists?}
+    E -- Yes --> E1{User choice}
+    E1 -- Rename --> F
+    E1 -- Cancel --> Z2([End: nothing created])
+    E1 -- Change existing --> E2[Suggest update-skill] --> Z2
+    E -- No --> F[Inspect conventions]
+    F --> G[Write SKILL.md and evals]
+    G --> H[Add or replace README entry]
+    H --> I[Add logs/NEW.md entry]
+    I --> J{Validation issues?}
+    J -- Yes --> J1[Fix issues] --> J
+    J -- No --> K[Report files, assumptions, validation]
+    K --> L{review-skill available?}
+    L -- No --> L1[Tell user to run it separately] --> Z3([End])
+    L -- Yes --> M{User accepts review?}
+    M -- Yes --> N[Run review-skill] --> Z3
+    M -- No --> Z3
 ```

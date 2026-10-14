@@ -122,3 +122,22 @@ nothing.
 
 **Fail:** The agent runs the review without consent, repeats the offer, or
 creates `REVIEW.md`.
+
+## 7. No repository access
+
+**Setup:** The skill is used in a host with no file access (for example, a
+chat assistant with `review-skill` pasted into its instructions).
+
+**User turns:**
+
+1. "Review plan-new-skill."
+2. (When asked) Paste the contents of `plan-new-skill`'s `SKILL.md` and
+   `evals/scenarios.md`.
+
+**Pass:** The agent says it cannot reach the skill's files and asks for the
+repository location or pasted contents. After receiving them, it returns the
+complete review in chat in the standard REVIEW.md layout and tells the user to
+save it as `skills/plan-new-skill/REVIEW.md`.
+
+**Fail:** The agent claims to have read files it could not access, reviews the
+skill from memory or guesses its content, or omits required review sections.

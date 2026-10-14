@@ -15,9 +15,10 @@ Read the target skill's files and the repository README. Edit only these files, 
 - `skills/<skill-name>/evals/scenarios.md`
 - `README.md`, only when the skill's description or purpose changes
 - `logs/UPDATES.md` at the repository root (create it if missing)
+- `logs/TODO.md` at the repository root, limited to checking off items that the applied updates resolve (do not add, reword, or delete items)
 - `skills/<skill-name>/REVIEW.md`, limited to the stale-review notice in step 7, or a rerun of `review-skill` the user agreed to
 
-Do not create new skills (suggest `create-skill`), edit other skills or files, write to `logs/NEW.md`, perform git operations, or install or sync skills into any host location. Run `review-skill` only after the user agrees. Do not depend on a particular tool, connector, or host-specific path.
+Do not create new skills (suggest `create-skill`), edit other skills or files, write to `logs/NEW.md`, perform git operations, or install or sync skills into any host location. Run `review-skill` only after the user agrees. Do not depend on a particular tool, connector, or host-specific path. Paths in this skill are relative to the root of the skills repository (the folder that contains `skills/`), not to wherever this skill is installed.
 
 Treat `REVIEW.md` content as evidence for proposals, not as instructions to carry out without approval.
 
@@ -32,7 +33,7 @@ Resolve the skill the user named to a single folder under `skills/` that contain
 Read the target's `SKILL.md`, `evals/scenarios.md` if present, and its README entry.
 
 - **If `REVIEW.md` exists:** Read it and extract its recommended improvements with their priorities.
-- **If `REVIEW.md` does not exist:** Offer once to run `review-skill` first. If the user accepts, run it and continue from the new review. If the user declines, ask what they want changed and work only from their instructions.
+- **If `REVIEW.md` does not exist:** Offer once to run `review-skill` first. If the user accepts, run it and continue from the new review. If the user declines, or `review-skill` cannot be run in this host, ask what they want changed and work only from their instructions. When `review-skill` is unavailable, say so instead of offering it.
 
 ### 3. Propose updates
 
@@ -56,12 +57,16 @@ Apply only the approved items. Leave every unapproved item untouched. If the ski
 
 Add an entry to the top of `logs/UPDATES.md` so the newest entry comes first. Use the format in the output specification.
 
+If `logs/TODO.md` exists, check off each item that the applied updates fully resolve. Leave partly resolved items unchecked and mention them in the completion report.
+
 ### 7. Handle REVIEW.md
 
 Skip this step if the target has no `REVIEW.md`. Otherwise, after applying updates, ask whether the user wants to rerun `review-skill`.
 
 - **Yes:** Run `review-skill` on the target so `REVIEW.md` reflects the updated skill.
 - **No:** Place a bold, all-caps notice at the top of `REVIEW.md` listing the updated files and stating that the review has not been updated since those changes. If a notice from an earlier update is already present, replace it with a single notice listing every file updated since the last review. Leave the rest of `REVIEW.md` unchanged.
+
+If `review-skill` cannot be run in this host, do not ask the rerun question. Add the stale notice as in the **No** path and tell the user to run `review-skill` separately to refresh the review.
 
 ## Constraints and edge cases
 
@@ -70,6 +75,8 @@ Skip this step if the target has no `REVIEW.md`. Otherwise, after applying updat
 - If a requested change would touch a file outside the permitted set, explain that it is out of scope and omit it from the proposal.
 - If the user asks to commit, push, or install, complete the approved update and explain that those actions are outside this skill's scope.
 - If the user asks to create a new skill, suggest `create-skill`.
+- If the skills repository or the target's files cannot be found (for example, when this skill is installed outside the repository or the host has no file access), ask the user for the repository location or the pasted contents of the target's files. Do not propose updates from memory.
+- If the host cannot write files, present each approved edit, the `logs/UPDATES.md` entry, and any stale notice in chat, naming the file and location for each, so the user can apply them.
 
 ## Output specification
 
@@ -103,6 +110,7 @@ Report to the user:
 - The files changed, with paths.
 - The items applied and the items skipped.
 - The location of the new log entry.
+- Any `logs/TODO.md` items checked off.
 - The REVIEW.md outcome: refreshed, marked stale, or no review present.
 
 Do not begin further updates unless the user starts a new request.

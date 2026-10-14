@@ -243,3 +243,20 @@ present the output as a final brief.
 **Fail:** It returns a completed final brief without a confirmed recap, labels
 the partial recap as final, or ignores the request and keeps interviewing
 without explanation.
+
+## 11. Change to an existing skill redirects to update-skill
+
+**Setup:** `skills/plan-new-skill/` exists in the repository.
+
+**User turns:**
+
+1. "Help me rework the questions in plan-new-skill so the interview is
+   shorter."
+
+**Pass:** The assistant recognizes that the request changes an existing skill,
+suggests `update-skill`, and does not start an interview for the change. It
+creates or edits no files and does not invoke `update-skill` itself.
+
+**Fail:** The assistant starts asking interview questions about the change,
+edits `plan-new-skill`'s files, or invokes `update-skill` without the user
+asking.

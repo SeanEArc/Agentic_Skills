@@ -1,6 +1,6 @@
 ---
 name: create-skill
-description: Author a complete, production-quality skill from a confirmed brief or user-supplied description. Creates the skill directory, SKILL.md, evaluation scenarios, and updates the repository README. Use when the user wants to build a new skill, not plan one.
+description: Author a complete, production-quality skill from a confirmed brief or user-supplied description. Creates the skill directory, SKILL.md, evaluation scenarios, updates the repository README, and logs the creation in logs/NEW.md. Use when the user wants to build a new skill, not plan one or change an existing one.
 ---
 
 # Skill Authoring Agent
@@ -9,7 +9,9 @@ Author a new AI skill as a complete, ready-to-use directory in this repository. 
 
 ## Operating boundary
 
-Create files and read existing files in the repository. Do not perform git operations, install skills, execute the authored skill's workflow, or modify files outside the skill directory and README.md. Do not invoke plan-new-skill automatically; only suggest it when appropriate.
+Create files and read existing files in the repository. Write only to the new skill directory, `README.md`, and `logs/NEW.md` at the repository root (create it if missing). Do not perform git operations, install skills, execute the authored skill's workflow, modify or overwrite an existing skill, or write to `logs/UPDATES.md`. Do not invoke plan-new-skill or update-skill automatically; only suggest them when appropriate. Run review-skill only after the user agrees.
+
+Paths in this skill are relative to the root of the skills repository (the folder that contains `skills/`), not to wherever this skill is installed.
 
 ## Workflow
 
@@ -21,7 +23,7 @@ If the input is thin — missing purpose, behavior, or scope — offer the user 
 
 ### 2. Check for name collisions
 
-Before creating files, check whether a skill with the same name already exists under `skills/`. If it does, present the existing skill's name, description, and purpose to the user. Let the user decide whether to overwrite, rename, or cancel. Do not proceed until the user responds.
+Before creating files, check whether a skill with the same name already exists under `skills/`. If it does, present the existing skill's name, description, and purpose to the user. Let the user choose to rename the new skill or cancel. If they want to change the existing skill instead, suggest update-skill and stop without creating files. Never overwrite an existing skill. Do not proceed until the user responds.
 
 ### 3. Inspect repository conventions
 
@@ -60,9 +62,13 @@ Write scenarios that test the authored skill's behavior, not create-skill's beha
 
 ### 5. Update README.md
 
-If README.md already has an entry for this skill (for example, after an overwrite), replace it; otherwise append an entry to the skills section. If no skills section exists, create one. Each entry includes the skill name and a concise, professional description of what it does. Keep the README easy to scan — use a consistent format matching any existing entries.
+If README.md already has an entry for this skill name (for example, a stale entry with no matching folder), replace it; otherwise append an entry to the skills section. If no skills section exists, create one. Each entry includes the skill name and a concise, professional description of what it does. Keep the README easy to scan — use a consistent format matching any existing entries.
 
-### 6. Validate the authored skill
+### 6. Log the creation
+
+Add an entry to the top of `logs/NEW.md` so the newest entry comes first. Use the format in the output specification.
+
+### 7. Validate the authored skill
 
 After writing all files, review the authored skill against these quality principles:
 
@@ -77,8 +83,13 @@ Also verify:
 - Operating boundary section exists and states both inclusions and exclusions.
 - Evaluation scenarios have pass and fail criteria for each scenario.
 - README.md entry is present and accurate.
+- `logs/NEW.md` entry is present and lists the files created.
 
 If validation reveals issues, fix them before reporting completion. Report the validation results to the user along with any assumptions that were recorded.
+
+### 8. Offer a review
+
+After reporting completion, ask once whether the user wants to run review-skill on the new skill. If they agree, run it. If they decline, do nothing further. If review-skill cannot be run in this host, do not offer it; tell the user to run it separately instead.
 
 ## Constraints and edge cases
 
@@ -86,13 +97,36 @@ If validation reveals issues, fix them before reporting completion. Report the v
 - If the supplied brief contains conflicting requirements, surface the conflict and ask the user to resolve it before authoring. Do not choose silently.
 - If the brief references capabilities that cannot be verified (specific tool access, API availability), document them as stated requirements and note they are unverified.
 - Do not add requirements, features, or behaviors beyond what the brief or description specifies. Record assumptions separately from confirmed requirements.
+- If the user asks to change an existing skill, suggest update-skill.
+- If the skills repository cannot be found (for example, when this skill is installed outside the repository or the host has no file access), ask the user for the repository location. If the host cannot write files, present each file's complete content in chat with its intended path, including the README and `logs/NEW.md` entries, so the user can save them. Skip the name-collision check only if the user cannot provide the existing skill names, and say that it was skipped.
+
+## Output specification
+
+Write each `logs/NEW.md` entry for human readers, using this layout:
+
+```markdown
+## <skill-name> — <YYYY-MM-DD>
+
+<One or two sentences on what the skill does and why it was created.>
+
+**Source:** <plan-new-skill brief, or direct description>
+
+**Files created**
+
+- `skills/<skill-name>/SKILL.md`
+- `skills/<skill-name>/evals/scenarios.md`
+
+**Assumptions:** <assumptions recorded during authoring, or "None">
+```
+
+If `logs/NEW.md` is new, give it a `# New skills` title above the first entry.
 
 ## Completion
 
 Report to the user:
-- Files created (with paths).
+- Files created or changed (with paths), including the README and `logs/NEW.md` entries.
 - A summary of the authored skill's purpose and scope.
 - Any assumptions that were made due to missing detail.
 - Validation results confirming the skill meets quality principles.
 
-Do not execute the authored skill or begin a follow-up task unless the user requests it.
+Then offer review-skill once, as in step 8. Do not execute the authored skill or begin any other follow-up task unless the user requests it.

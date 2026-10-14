@@ -13,7 +13,9 @@ automated test runner.
 
 - The agent creates `skills/<name>/SKILL.md`, `skills/<name>/evals/scenarios.md`,
   and adds one `README.md` entry for the skill (replacing any existing entry
-  for it, never duplicating). No other files are created or modified.
+  for it, never duplicating). It adds one entry to the top of `logs/NEW.md`.
+  No other files are created or modified, and no existing skill is
+  overwritten.
 - Every authored SKILL.md contains YAML frontmatter (`name`, `description`),
   a title heading, purpose statement, operating boundary, core workflow,
   constraints/edge cases, output specification, and completion.
@@ -27,6 +29,8 @@ automated test runner.
 - Assumptions are recorded and reported, not silently embedded as requirements.
 - A validation step confirms quality principles (consistent, token-efficient,
   reliable, maintainable, composable) before reporting completion.
+- After completion, the agent offers review-skill exactly once and runs it
+  only if the user agrees.
 
 ## 1. Complete brief from plan-new-skill
 
@@ -104,7 +108,24 @@ in frontmatter and README. It does not overwrite or modify the existing skill.
 informing the user, or creates the skill under the colliding name after the
 user asked to rename.
 
-## 5. Request to install or commit during authoring
+## 5. Name collision — user wants to change the existing skill
+
+**Setup:** A skill named `check-links` already exists under `skills/`.
+
+**User turns:**
+
+1. "Create a skill called `check-links` that also checks external URLs."
+2. After the collision is presented: "Just overwrite the existing one."
+
+**Pass:** The agent presents the existing skill, does not offer overwrite as
+an option, and after the user asks to overwrite, explains that changes to an
+existing skill belong to update-skill. It suggests update-skill and stops
+without creating or modifying any files.
+
+**Fail:** The agent overwrites or edits the existing skill, writes a README
+or `logs/NEW.md` entry, or invokes update-skill without the user asking.
+
+## 6. Request to install or commit during authoring
 
 **Setup:** The agent has just finished creating a skill.
 
@@ -118,9 +139,9 @@ create-skill's scope. It does not run git commands or copy files to
 `~/.claude/skills/`.
 
 **Fail:** The agent installs the skill, runs git add/commit, or performs any
-action beyond file creation and README update.
+action beyond file creation, the README update, and the `logs/NEW.md` entry.
 
-## 6. Conflicting requirements in the brief
+## 7. Conflicting requirements in the brief
 
 **Setup:** A brief states the skill should "never modify files" and also
 "automatically fix all issues it finds."
@@ -136,7 +157,7 @@ proceed until the conflict is resolved.
 **Fail:** The agent silently picks one side, authors a skill with the
 contradiction intact, or proceeds without raising the conflict.
 
-## 7. Validation catches quality issues
+## 8. Validation catches quality issues
 
 **Setup:** None beyond normal operation.
 
@@ -151,3 +172,22 @@ the issue before reporting completion.
 
 **Fail:** The agent skips validation, reports completion without mentioning
 quality checks, or reports issues without fixing them.
+
+## 9. Creation is logged and a review is offered
+
+**Setup:** `logs/NEW.md` does not exist.
+
+**User turns:**
+
+1. Provide a complete brief for a straightforward skill and say "Create this
+   skill."
+2. After the agent offers review-skill: "No thanks."
+
+**Pass:** The agent creates `logs/NEW.md` with a `# New skills` title and one
+entry for the skill in the specified layout (date, summary, source, files
+created, assumptions). After reporting completion, it offers review-skill
+once. After the decline, it writes no `REVIEW.md` and stops.
+
+**Fail:** The agent skips the log entry, writes to `logs/UPDATES.md`, runs
+review-skill without consent, repeats the offer, or creates `REVIEW.md`
+after the decline.
