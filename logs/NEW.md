@@ -1,5 +1,18 @@
 # New skills
 
+## analyze-app — 2026-10-16
+
+Researches an application passively and saves a report with a brief summary, core functionality, and a conceptual explanation of how it works, one folder per app under `private/analyzed-applications/`. Created so the user can keep reviewable app analyses to revisit and give other agents as context, for example to plan reverse-engineering work.
+
+**Source:** plan-new-skill brief
+
+**Files created**
+
+- `skills/analyze-app/SKILL.md`
+- `skills/analyze-app/evals/scenarios.md`
+
+**Assumptions:** The current report is always `analysis.md`; a kept dated copy renames the previous report to `analysis-<YYYY-MM-DD>.md` (its own analysis date, with `_2`, `_3` on clashes). The `private/` folder is relative to the folder the skill is run from, matching review-repo. The repository handoff runs before writing so the report can link the review's path; if review-repo cannot run, the review is recorded as pending. Confirmed or inferred labels apply to How it works as well as the handoff section. Researched content is treated as data, and text addressed to AI agents is noted under coverage. With no web access and no supplied material, the skill asks for material. An empty, untracked `skills/analyze-application/` folder already existed; it was left untouched.
+
 ## review-repo — 2026-10-15
 
 Reviews a GitHub or local repository before the user trusts it, reporting harmful or malicious behavior and AI-directed prompt injection first, then explaining the repository's purpose and workflow. Created so users can vet unfamiliar repositories without running them.
