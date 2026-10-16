@@ -1,5 +1,94 @@
 # Skill updates
 
+## ez-understand — 2026-10-15
+
+Widened the skill to explain topics the user names, not only the previous response, after a request to "help me understand RAG" fell outside its scope. Also applied every REVIEW.md improvement: profile recognition, a tighter trigger, the rule for flagging doubt, excluding boundary replies as a source, a once-per-conversation detail line, and broader eval coverage.
+
+**Changes**
+
+1. **Explain named topics** (`SKILL.md`) — The description, purpose, boundary, and step 1 now cover a named topic as well as the previous response. Step 3 adds a topic accuracy rule (well-established knowledge, flag uncertainty, no research), and edge cases add ambiguous topics and limit the out-of-scope case to pasted text. *Why:* the user wanted topics explained in one step. *Why it is better:* direct questions work without a two-step workaround, while level, clarification, and profile behavior stay the same.
+2. **Topic-mode evals** (`evals/scenarios.md`) — The shared accuracy check covers topics, a new named-topic scenario was added, and the out-of-scope scenario is now pasted text only. *Why:* the old scenario failed topic explanations. *Why it is better:* the evals match the new scope.
+3. **README entry** (`README.md`) — The description now mentions named topics. *Why:* the skill's purpose changed. *Why it is better:* the README stays accurate.
+4. **Profile recognition** (`SKILL.md`, step 2) — Text labeled "ez-understand profile" counts as the profile; otherwise general preferences in persistent instructions apply. *Why:* recognition was undefined. *Why it is better:* the agent no longer has to guess.
+5. **Tighter confusion trigger** (`SKILL.md`, frontmatter) — Confusion triggers the skill only when it is about the previous response. *Why:* the trigger could fire on unrelated confusion. *Why it is better:* fewer misfires.
+6. **More eval coverage** (`evals/scenarios.md`) — Added scenarios for a named part with an already-simple response, and for repeated level corrections followed by a declined suggestion. *Why:* those paths were untested. *Why it is better:* the evals cover steps 1 and 5 and the edge cases.
+7. **Flagging doubt** (`SKILL.md`, constraints) — Flagging doubt without asserting a correction is not a new claim. *Why:* two rules appeared to conflict. *Why it is better:* removes the conflict.
+8. **Boundary replies excluded** (`SKILL.md`, step 1) — The skill's own scope replies are never a source. *Why:* "explain that" could target the wrong message. *Why it is better:* the right content gets explained.
+9. **Detail line once** (`SKILL.md`, step 3 and output specification) — The "ask for more or less detail" line appears only on the first default-level explanation. *Why:* it repeated on every explanation. *Why it is better:* less repetition and fewer tokens.
+
+**Review items addressed:** Medium 1, Medium 2, Medium 3, Low 1, Low 2, Low 3 (plus user-requested items 1–3)
+
+## plan-new-skill — 2026-10-15 (existing authorization)
+
+Honor explicitly waived recap confirmation once material requirements are resolved; retain clarification for conflicts and permit requested authoring handoffs.
+
+**Changes**
+
+1. **Authorization path** (`skills/plan-new-skill/SKILL.md`) — Recognize authorization already given while preserving skill boundaries, later refusals, and host permissions. *Why:* mandatory repeated checkpoints blocked authorized work. *Why it is better:* the agent can finish the requested workflow without inventing broader permission.
+2. **Behavioral scenarios** (`skills/plan-new-skill/evals/scenarios.md`) — Align expectations with existing authorization and add focused coverage for the changed path. *Why:* old scenarios enforced redundant approval. *Why it is better:* regression checks distinguish authorized continuation from scope expansion.
+3. **Stale review** (`skills/plan-new-skill/REVIEW.md`) — Mark the earlier review stale; its judgments were not rerun.
+
+**Repository documentation:** README.md and CLAUDE.md now describe authorized lifecycle handoffs.
+
+**Review items addressed:** User-approved repository review item 7 (approval loops and separate-request restrictions).
+
+## create-skill — 2026-10-15 (existing authorization)
+
+Run a review already included in the creation request without another approval, and resume authorized authoring after a planning handoff.
+
+**Changes**
+
+1. **Authorization path** (`skills/create-skill/SKILL.md`) — Recognize authorization already given while preserving skill boundaries, later refusals, and host permissions. *Why:* mandatory repeated checkpoints blocked authorized work. *Why it is better:* the agent can finish the requested workflow without inventing broader permission.
+2. **Behavioral scenarios** (`skills/create-skill/evals/scenarios.md`) — Align expectations with existing authorization and add focused coverage for the changed path. *Why:* old scenarios enforced redundant approval. *Why it is better:* regression checks distinguish authorized continuation from scope expansion.
+3. **Stale review** (`skills/create-skill/REVIEW.md`) — Mark the earlier review stale; its judgments were not rerun.
+
+**Review items addressed:** User-approved repository review item 7 (approval loops and separate-request restrictions).
+
+## review-skill — 2026-10-15 (existing authorization)
+
+Finish the review before handing requested fixes to update-skill without demanding a separate task.
+
+**Changes**
+
+1. **Authorization path** (`skills/review-skill/SKILL.md`) — Recognize authorization already given while preserving skill boundaries, later refusals, and host permissions. *Why:* mandatory repeated checkpoints blocked authorized work. *Why it is better:* the agent can finish the requested workflow without inventing broader permission.
+2. **Behavioral scenarios** (`skills/review-skill/evals/scenarios.md`) — Align expectations with existing authorization and add focused coverage for the changed path. *Why:* old scenarios enforced redundant approval. *Why it is better:* regression checks distinguish authorized continuation from scope expansion.
+
+**Review items addressed:** User-approved repository review item 7 (approval loops and separate-request restrictions).
+
+## update-skill — 2026-10-15 (existing authorization)
+
+Map concrete requested changes and delegated findings to authorization; avoid repeated item approval and review-rerun questions.
+
+**Changes**
+
+1. **Authorization path** (`skills/update-skill/SKILL.md`) — Recognize authorization already given while preserving skill boundaries, later refusals, and host permissions. *Why:* mandatory repeated checkpoints blocked authorized work. *Why it is better:* the agent can finish the requested workflow without inventing broader permission.
+2. **Behavioral scenarios** (`skills/update-skill/evals/scenarios.md`) — Align expectations with existing authorization and add focused coverage for the changed path. *Why:* old scenarios enforced redundant approval. *Why it is better:* regression checks distinguish authorized continuation from scope expansion.
+
+**Review items addressed:** User-approved repository review item 7 (approval loops and separate-request restrictions).
+
+## run-evals — 2026-10-15 (existing authorization)
+
+Execute and save scoped evaluations under the original request, preserve explicit checkpoints, and continue requested targets or fixes without an unbounded retry loop.
+
+**Changes**
+
+1. **Authorization path** (`skills/run-evals/SKILL.md`) — Recognize authorization already given while preserving skill boundaries, later refusals, and host permissions. *Why:* mandatory repeated checkpoints blocked authorized work. *Why it is better:* the agent can finish the requested workflow without inventing broader permission.
+2. **Behavioral scenarios** (`skills/run-evals/evals/scenarios.md`) — Align expectations with existing authorization and add focused coverage for the changed path. *Why:* old scenarios enforced redundant approval. *Why it is better:* regression checks distinguish authorized continuation from scope expansion.
+
+**Review items addressed:** User-approved repository review item 7 (approval loops and separate-request restrictions).
+
+## sync-skills — 2026-10-15 (existing authorization)
+
+Accept host, location, and selection already supplied; preserve explicit removal and overwrite protections.
+
+**Changes**
+
+1. **Authorization path** (`skills/sync-skills/SKILL.md`) — Recognize authorization already given while preserving skill boundaries, later refusals, and host permissions. *Why:* mandatory repeated checkpoints blocked authorized work. *Why it is better:* the agent can finish the requested workflow without inventing broader permission.
+2. **Behavioral scenarios** (`skills/sync-skills/evals/scenarios.md`) — Align expectations with existing authorization and add focused coverage for the changed path. *Why:* old scenarios enforced redundant approval. *Why it is better:* regression checks distinguish authorized continuation from scope expansion.
+3. **Stale review** (`skills/sync-skills/REVIEW.md`) — Mark the earlier review stale; its judgments were not rerun.
+
+**Review items addressed:** User-approved repository review item 7 (approval loops and separate-request restrictions).
+
 ## update-skill — 2026-10-14 (TODO tracking)
 
 Allowed `update-skill` to check off `logs/TODO.md` items that its applied updates resolve, so the repository's open-items list stays current without a separate manual step.

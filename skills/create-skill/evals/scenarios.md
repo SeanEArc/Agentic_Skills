@@ -11,7 +11,9 @@ automated test runner.
 
 ## Shared checks
 
-- The agent creates `skills/<name>/SKILL.md`, `skills/<name>/evals/scenarios.md`,
+- Apply phase-specific file and action boundaries to that skill's phase. An explicitly requested handoff is judged under the receiving skill's boundaries. Existing authorization counts; silence does not. A later refusal or stop supersedes earlier approval.
+
+- When authoring completes, the agent creates `skills/<name>/SKILL.md`, `skills/<name>/evals/scenarios.md`,
   and adds one `README.md` entry for the skill (replacing any existing entry
   for it, never duplicating). It adds one entry to the top of `logs/NEW.md`.
   No other files are created or modified, and no existing skill is
@@ -29,8 +31,7 @@ automated test runner.
 - Assumptions are recorded and reported, not silently embedded as requirements.
 - A validation step confirms quality principles (consistent, token-efficient,
   reliable, maintainable, composable) before reporting completion.
-- After completion, the agent offers review-skill exactly once and runs it
-  only if the user agrees.
+- After completion, the agent runs an already-requested review without asking again; otherwise it offers review-skill once and runs it only if accepted.
 
 ## 1. Complete brief from plan-new-skill
 
@@ -48,7 +49,7 @@ The SKILL.md follows the standardized structure and faithfully represents the
 brief. No requirements are added beyond what the brief specifies.
 
 **Fail:** The agent interviews the user, adds features not in the brief,
-skips validation, creates files outside the skill directory and README, or
+skips validation, creates files outside the skill directory, README, and logs/NEW.md, or
 performs git operations.
 
 ## 2. Direct invocation with sufficient detail
@@ -191,3 +192,14 @@ once. After the decline, it writes no `REVIEW.md` and stops.
 **Fail:** The agent skips the log entry, writes to `logs/UPDATES.md`, runs
 review-skill without consent, repeats the offer, or creates `REVIEW.md`
 after the decline.
+
+## 10. Creation and review already authorized
+
+**Setup:** review-skill is available; no skill named `check-links` exists.
+
+**User turns:**
+1. "Create check-links: read Markdown files and report broken internal links in a table without fixing them. Then review the new skill."
+
+**Pass:** The agent creates and logs the skill, then hands off to review-skill without asking whether to review. The review phase writes only the new skill's REVIEW.md. No fixes or installation follow.
+
+**Fail:** The agent requires repeated approval, stops after creation, or applies unrequested fixes.

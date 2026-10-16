@@ -11,11 +11,13 @@ A repository of reusable AI skill definitions — structured prompt instructions
 | **review-skill** | Reviews an existing skill and writes a human-readable `REVIEW.md` in its folder with 1–5 scores, scope analysis, prioritized improvements, token-cost and runtime estimates, reliability, and a workflow diagram. Read-only toward the reviewed skill. |
 | **update-skill** | Improves an existing skill by proposing prioritized updates from its `REVIEW.md` or user requests, applying only approved items, and logging each change in `logs/UPDATES.md`. Marks `REVIEW.md` as stale unless the review is rerun. |
 | **sync-skills** | Downloads skills from a source repository (GitHub by default, or a local checkout) and shows each installed skill's status: not installed, up to date, out of date, edited since install, or deprecated. Installs, updates, or removes only the skills the user selects, never overwrites local edits, and packages skills for Claude.ai or ChatGPT. No git operations. |
-| **run-evals** | Runs one skill's `evals/scenarios.md` scenarios in fresh, isolated runs (or guides you through them on hosts that can't), judges each with quoted evidence, and records the results, run history, and untested paths in the skill's `EVALS.md`. Never edits the skill under test; suggests update-skill for failures. |
+| **run-evals** | Runs one skill's `evals/scenarios.md` scenarios in fresh, isolated runs (or guides you through them on hosts that can't), judges each with quoted evidence, and records the results, run history, and untested paths in the skill's `EVALS.md`. Never edits the skill during evaluation; hands requested fixes to update-skill after recording results. |
+| **ez-understand** | Explains a named topic, or re-explains the assistant's previous response, in plain language, at a college-freshman level by default or at the level set in a user-kept profile. Clarifies the parts a user still finds confusing and suggests profile updates as text to save; never writes files, researches, or distorts the original meaning. |
+| **review-repo** | Reviews a GitHub or local repository before you trust it. Flags harmful or malicious behavior and AI-directed prompt injection first, with file citations and severity, then explains what the repository does and how its parts work together. Saves the report to `private/repo-review/<repo-name>-review.md`. Strictly read-only and never runs the repository's commands. |
 
 ## Skill lifecycle
 
-Four skills form a pipeline for building and maintaining skills. Each step is invoked separately; no skill runs another without the user's agreement. A fifth skill, `sync-skills`, installs and updates the results (see [Using a skill](#using-a-skill)).
+Four skills form a pipeline for building and maintaining skills. Each step has its own scope. An explicit request covering multiple steps authorizes handoffs between available skills without repeated approval; otherwise ask before starting an additional step. A fifth skill, `sync-skills`, installs and updates the results (see [Using a skill](#using-a-skill)).
 
 ```
 plan-new-skill  →  create-skill  →  review-skill  →  update-skill

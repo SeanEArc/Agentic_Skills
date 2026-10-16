@@ -9,7 +9,7 @@ Turn the user's rough skill idea into a confirmed, actionable brief that a separ
 
 ## Operating boundary
 
-Conduct the interview and return its results in chat. Do not draft the proposed `SKILL.md`, generate implementation code or scaffolding, create or edit files, install a skill, or perform the proposed skill's work. Describe future actions as requirements, not as authorization to execute them. Do not automatically invoke another skill or hand work off to an execution tool.
+Conduct the interview and return its results in chat. Do not draft the proposed `SKILL.md`, generate implementation code or scaffolding, create or edit files, install a skill, or perform the proposed skill's work. Describe future actions as requirements, not as authorization to execute them. Do not execute the proposed workflow. After finishing the brief, hand off to an available authoring skill only if the user explicitly requested authoring as a subsequent step; otherwise stop with the brief.
 
 Use ordinary conversational questions so the interview works in Claude and ChatGPT. Structured question tools are optional when available; do not depend on a particular tool, connector, or host-specific path.
 
@@ -55,7 +55,7 @@ When the user is unsure, suggest a concrete default with its effect. Accept dele
 
 The interview is ready for confirmation when a separate authoring agent could implement the intended behavior without deciding its purpose, material scope, output contract, or action boundaries. Minor implementation choices may remain with that agent; this is a requirements brief, not an implementation design.
 
-Present a short recap of the proposed requirements, including relevant defaults and assumptions, and explicitly ask the user to confirm or revise it. Do not include a completed brief in the same turn. Wait for confirmation of that recap; silence or earlier approval of the general idea does not confirm it.
+By default, present a short recap of the proposed requirements, including relevant defaults and assumptions, and ask the user to confirm or revise it before returning the final brief. If the user explicitly asks to skip this checkpoint or delegates finalization, return the completed brief once material requirements are resolved. Label delegated defaults and assumptions honestly; do not claim the user confirmed a recap they did not confirm. Silence or approval of the general idea alone does not waive this checkpoint.
 
 If the user revises requirements, incorporate the revisions, resolve any newly introduced gaps, and present the updated recap for confirmation.
 
@@ -65,7 +65,7 @@ If the user revises requirements, incorporate the revisions, resolve any newly i
 - **Changes to an existing skill:** If the user wants to change a skill that already exists, suggest `update-skill` instead and do not interview for that change.
 - **Inspection unavailable:** If a supplied resource cannot be inspected, say so and ask for only the relevant excerpt or missing context. Do not claim to have inspected a resource. If it is optional, continue with a clearly identified assumption rather than blocking the conversation.
 - **Early stop or interim summary:** If the user stops early or requests an interim summary, return a partial requirements recap (see the output specification) and do not continue questioning unless the user resumes.
-- **Request to skip confirmation:** Provide a partial requirements recap and explain that a completed brief requires confirmation.
+- **Request to skip confirmation:** Honor the request when material requirements are resolved. If consequential gaps remain, ask only about those gaps, or return a partial recap if the user wants to stop; do not require a confirmation turn merely as a formality.
 
 ## Output specification
 
@@ -88,4 +88,4 @@ Title it **Partial requirements recap** and label it incomplete. List known deci
 
 ## Completion
 
-Once the user confirms the current recap, return the final brief in chat. Finish with the brief; do not begin authoring afterward.
+Return the final brief after recap confirmation or explicitly delegated finalization. If authoring was also requested, hand off to an available authoring skill without asking again; otherwise finish with the brief. If that skill is unavailable, say what remains. Respect later stop requests and host permissions.

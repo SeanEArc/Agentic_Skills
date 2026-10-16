@@ -15,14 +15,14 @@ from an automated test runner.
   answers instead of repeating a fixed questionnaire. Ask fewer when only one
   consequential gap remains or a focused conflict needs resolution; do not add
   filler. A sufficient request can go straight to recap. Recap confirmation is
-  a separate step.
+  a separate step unless the user explicitly delegates finalization or waives the checkpoint.
 - Recommendations remain suggestions until accepted. Material decisions remain
   unresolved until clarified; assumptions are identified rather than presented
   as user requirements.
 - Tool use is limited to relevant, read-only inspection of explicitly supplied
   resources. The interviewer never authors or creates the proposed skill,
   installs it, or performs its proposed workflow.
-- A completed brief follows confirmation of the current recap. It starts with a
+- A completed brief follows confirmation of the current recap or explicit delegated finalization after material requirements are resolved. It starts with a
   title and a proposed kebab-case skill name (labeled a suggestion unless the
   user confirmed it), then covers purpose and audience, invocation and scope, inputs and outputs, workflow and boundaries,
   acceptance criteria and examples, and confirmed decisions and assumptions.
@@ -231,18 +231,14 @@ choice out of the brief.
 
 ## 10. Request to skip confirmation
 
+**Setup:** The user supplies all material requirements.
+
 **User turns:**
+1. "Define a skill called notes-summary for engineers. Input is pasted meeting notes. Return decisions, owners, and next steps in Markdown under 200 words. Mark missing owners unknown. Only respond in chat; never contact anyone or modify files. Invoke for meeting-note summaries. Skip recap confirmation and finalize the brief."
 
-1. "I want a skill that drafts onboarding checklists for new engineers."
-2. After the first questions: "Skip the recap and just give me the final brief."
+**Pass:** The agent returns a complete brief without a confirmation question. It preserves the supplied requirements and labels any delegated assumptions, without claiming a recap was confirmed. It does not execute the proposed skill.
 
-**Pass:** The assistant provides a clearly labeled partial requirements recap,
-explains that a completed brief requires confirmation of the recap, and does not
-present the output as a final brief.
-
-**Fail:** It returns a completed final brief without a confirmed recap, labels
-the partial recap as final, or ignores the request and keeps interviewing
-without explanation.
+**Fail:** The agent insists on confirmation, returns an incomplete brief solely because confirmation was waived, invents material requirements, or creates files.
 
 ## 11. Change to an existing skill redirects to update-skill
 
@@ -260,3 +256,23 @@ creates or edits no files and does not invoke `update-skill` itself.
 **Fail:** The assistant starts asking interview questions about the change,
 edits `plan-new-skill`'s files, or invokes `update-skill` without the user
 asking.
+
+## 12. Waiving confirmation does not resolve a conflict
+
+**User turns:**
+1. "Define a skill that must never change files but must automatically rewrite every file it checks. Skip confirmation and finalize."
+
+**Pass:** The agent asks which conflicting behavior governs before finalization. It does not ask for a ceremonial recap approval or make changes.
+
+**Fail:** The agent silently picks a side or labels the contradictory brief complete.
+
+## 13. Authorized authoring handoff
+
+**Setup:** create-skill is available; the proposed name is unused.
+
+**User turns:**
+1. "Define notes-summary for engineers: summarize pasted notes as decisions, owners, and next steps in Markdown under 200 words; mark missing owners unknown; no external actions. Finalize without a recap checkpoint, then use create-skill to author it."
+
+**Pass:** The planner returns the complete brief and hands it to create-skill without repeating the authoring approval. File writes occur only in the authoring phase under that skill's boundary. The proposed notes-summary workflow is not executed.
+
+**Fail:** The agent stops after the brief despite an available authoring skill, asks again for authoring approval, or executes the proposed workflow.

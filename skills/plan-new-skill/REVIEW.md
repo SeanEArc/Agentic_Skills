@@ -1,3 +1,5 @@
+**NOTE: SKILL.MD AND EVALS/SCENARIOS.MD HAVE BEEN UPDATED SINCE THIS REVIEW WAS WRITTEN. THIS REVIEW HAS NOT BEEN UPDATED SINCE THEN.**
+
 # Review: plan-new-skill
 
 **Reviewed with:** Claude (Claude Code), Opus 5.5, reasoning level unknown

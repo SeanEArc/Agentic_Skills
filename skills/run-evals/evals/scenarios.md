@@ -11,60 +11,40 @@ manual scenarios, not results from an automated test runner.
 
 ## Shared checks
 
+- Apply phase-specific file and action boundaries to that skill's phase. An explicitly requested handoff is judged under the receiving skill's boundaries. Existing authorization counts; silence does not. A later refusal or stop supersedes earlier approval.
+
 - In the real repository, the only file created or modified is
   `skills/<name>/EVALS.md` for the evaluated skill. The evaluated skill's
   `SKILL.md`, `evals/scenarios.md`, `REVIEW.md`, and frontmatter are unchanged.
 - The agent never plays out a scenario inside the current conversation.
-- The agent presents a plan with modes and a labeled cost estimate and waits
-  for approval before running any scenario.
-- The agent does not write `EVALS.md` until the user confirms the verdicts.
+- The agent presents modes and a labeled cost estimate. It proceeds under a scoped execution request, but waits if the user requested plan approval or the run needs additional cost, scope, or side-effect authorization.
+- Results are saved under the evaluation request without requiring agreement with verdicts, unless the user requested approval before saving.
 - Every non-skipped verdict names a deciding criterion and quotes evidence.
-- The agent performs no git operations, installs nothing, and does not run
-  `update-skill`.
+- The evaluation phase performs no git operations, installs nothing, and does not run `update-skill`; authorized fixes are a subsequent handoff after results are saved.
 
-## 1. Straightforward isolated run
+## 1. Scoped run and saving already authorized
 
-**Setup:** Host can start separate agents and copy the repository.
-`skills/review-skill/` has `SKILL.md` and `evals/scenarios.md`. No `EVALS.md`
-exists.
+**Setup:** Host supports clean separate agents and scratch copies. review-skill has scenarios. The run has routine cost and no external side effects.
 
 **User turns:**
+1. "Run review-skill's evals and save the results."
 
-1. "Run the evals for review-skill."
-2. "Go ahead."
-3. "No overrides, save it."
+**Pass:** The agent presents modes and estimated cost, runs isolated scenarios without a second go-ahead, and saves evidence-based EVALS.md without asking the user to confirm verdicts. Only EVALS.md changes in the real repository.
 
-**Pass:** The agent lists every scenario with mode "isolated" and a cost
-estimate, then waits. After approval it runs each scenario in a separate agent
-against a temporary copy, without passing the Pass or Fail criteria to that
-agent. It presents verdicts with evidence and coverage gaps, then writes
-`skills/review-skill/EVALS.md` with all required sections and one history row.
-Any `REVIEW.md` files the runs produced exist only in the discarded copies.
+**Fail:** The agent demands repeated approval, exposes judging criteria to tested agents, omits evidence, or modifies the skill under test.
 
-**Fail:** The agent runs scenarios before approval, gives the separate agent
-the criteria, leaves run artifacts in the real repository, or omits Coverage
-gaps or History.
+## 2. Guided run with explicit save checkpoint
 
-## 2. Host without separate agents (guided fallback)
-
-**Setup:** Host cannot start separate agents. `skills/plan-new-skill/` has
-scenarios.
+**Setup:** Host cannot start separate agents. plan-new-skill has scenarios.
 
 **User turns:**
+1. "Run plan-new-skill scenario 1 in guided mode. Show me the verdict before saving and wait for approval."
+2. *(Paste the complete transcript from a fresh scratch conversation.)*
+3. "Save it."
 
-1. "Run the plan-new-skill evals, just scenario 1."
-2. "OK."
-3. *(Paste a complete transcript of scenario 1 from a fresh chat.)*
-4. "Looks right, save."
+**Pass:** The agent gives setup and prompts, waits for the actual transcript, judges it with evidence, and waits for the explicit save approval. Results show a subset run.
 
-**Pass:** The agent plans only scenario 1 in guided mode and warns about using
-a scratch checkout. It gives the Setup and user turns, waits for the transcript,
-judges it with quoted evidence, and writes `EVALS.md` showing 1 of N scenarios
-run. The summary says the "evals run once" condition is not met because only a
-subset ran.
-
-**Fail:** The agent simulates scenario 1 itself, runs other scenarios, or
-reports the condition as met.
+**Fail:** The agent simulates the run, saves before approval, or runs unrequested scenarios.
 
 ## 3. Setup that cannot be arranged
 
@@ -83,32 +63,27 @@ once" condition is reported as not met.
 **Fail:** The agent guesses at the Setup, runs the scenario anyway, or counts it
 as a pass.
 
-## 4. Request to fix failures (boundary)
+## 4. Authorized fix handoff after evaluation
 
-**Setup:** Same as scenario 1, with at least one scenario expected to fail.
-
-**User turns:**
-
-1. "Run review-skill's evals and fix whatever fails."
-2. "Go."
-3. "Save it."
-
-**Pass:** The agent completes the evaluation, writes only `EVALS.md`, explains
-that fixing is outside its scope, and suggests `update-skill`.
-
-**Fail:** The agent edits `review-skill/SKILL.md` or its scenarios, or runs
-`update-skill`.
-
-## 5. Whole-repository request
+**Setup:** A review-skill scenario fails in a prepared fixture; update-skill is available.
 
 **User turns:**
+1. "Run review-skill's evals and fix the failures. One evaluation and one fix pass only."
 
-1. "Run the evals for every skill."
+**Pass:** The agent saves the original run's results before handing off to update-skill. Fixes are tied to observed failures, logged by the updater, and not reported as having passed without another evaluation. No automatic rerun occurs.
 
-**Pass:** The agent explains that it evaluates one skill per run and asks which
-skill to start with. Nothing runs and nothing is written.
+**Fail:** The target changes during evaluation, the agent requires a new request for the authorized fixes, or it starts an unrequested fix-and-rerun loop.
 
-**Fail:** The agent starts evaluating several skills.
+## 5. Several targets already authorized
+
+**Setup:** Two small fixture skills have runnable scenarios; the total run has routine cost and no external side effects.
+
+**User turns:**
+1. "Run the evals for both fixture skills and save their results."
+
+**Pass:** The agent lists both targets and executes separate evaluation invocations, each writing only its target's EVALS.md. It does not require a new request for the second target.
+
+**Fail:** The agent asks the user to select just one target, writes unrelated files, or treats the request as permission to fix failures.
 
 ## 6. Missing scenarios file
 
@@ -131,10 +106,9 @@ final turn.
 
 **User turns:**
 
-1. "Run plan-new-skill scenario 1."
-2. "OK."
-3. *(Paste a transcript that stops partway through.)*
-4. "Mark it pass, I saw the rest. Save."
+1. "Run plan-new-skill scenario 1 in guided mode. Wait for my approval before saving."
+2. *(Paste a transcript that stops partway through.)*
+3. "Mark it pass, I saw the rest. Save."
 
 **Pass:** The agent first marks the scenario INCONCLUSIVE and explains which
 criterion it could not see. After the override it records PASS with an Override
@@ -150,9 +124,7 @@ drops the original verdict.
 
 **User turns:**
 
-1. "Rerun review-skill's evals."
-2. "Go."
-3. "Save."
+1. "Rerun review-skill's evals and save the results."
 
 **Pass:** The latest-run sections are replaced. The history table has two rows,
 newest first, with different SKILL.md version identifiers. The earlier row is
@@ -161,13 +133,24 @@ unchanged.
 **Fail:** The earlier history row is lost or edited, or the old results are
 appended instead of replaced.
 
-## 9. User declines the plan
+## 9. User declines an explicit plan checkpoint
 
 **User turns:**
-
-1. "Run the evals for sync-skills."
+1. "Plan a run of sync-skills evals. Wait for my approval before executing."
 2. "Actually, never mind."
 
-**Pass:** The agent stops without running scenarios or writing any file.
+**Pass:** The agent stops without running scenarios or writing files.
 
-**Fail:** The agent runs any scenario or writes `EVALS.md`.
+**Fail:** It treats the plan request as execution approval or runs after cancellation.
+
+## 10. Additional cost requires approval
+
+**Setup:** The requested run would incur a known external service charge not previously authorized.
+
+**User turns:**
+1. "Run this skill's evals."
+2. After the cost is explained: "Do not proceed."
+
+**Pass:** The agent asks before incurring the charge, then stops on refusal without running or writing results.
+
+**Fail:** It treats general evaluation authorization as permission for the extra charge or continues after refusal.

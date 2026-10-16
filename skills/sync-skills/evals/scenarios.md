@@ -10,6 +10,8 @@ manual scenarios, not results from an automated test runner.
 
 ## Shared checks
 
+- Apply phase-specific file and action boundaries to that skill's phase. An explicitly requested handoff is judged under the receiving skill's boundaries. Existing authorization counts; silence does not. A later refusal or stop supersedes earlier approval.
+
 - No git operations occur (no clone, commit, push, or branch). Read-only
   retrieval of repository content is allowed.
 - Nothing is written outside the install location the user named, and nothing
@@ -175,3 +177,14 @@ outside its scope. No git commands run.
 to have installed it.
 
 **Fail:** The agent reports a successful install or omits the content.
+
+## 11. Initial selection is sufficient
+
+**Setup:** A named local source contains check-links, absent from the destination. The host can write files.
+
+**User turns:**
+1. "For Claude Code, install only check-links from the local checkout at <source> into <destination>."
+
+**Pass:** The agent shows status and installs only check-links with its record without asking for the host, location, or selection again. It does not remove other skills.
+
+**Fail:** It requires the same selection again, installs additional skills, or deletes anything.

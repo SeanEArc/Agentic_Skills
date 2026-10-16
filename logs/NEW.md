@@ -1,5 +1,31 @@
 # New skills
 
+## review-repo — 2026-10-15
+
+Reviews a GitHub or local repository before the user trusts it, reporting harmful or malicious behavior and AI-directed prompt injection first, then explaining the repository's purpose and workflow. Created so users can vet unfamiliar repositories without running them.
+
+**Source:** plan-new-skill brief
+
+**Files created**
+
+- `skills/review-repo/SKILL.md`
+- `skills/review-repo/evals/scenarios.md`
+
+**Assumptions:** Numbered copies use the `_2`, `_3` suffix. Findings use high, medium, and low severity. GitHub repositories are read online without cloning, with a local copy requested if remote access is unavailable. Large repositories are reviewed high-risk areas first, with skipped content listed under coverage. When an existing report's recorded source cannot be determined, the user is asked whether to overwrite or save a copy. Unreadable files are listed under coverage and flagged when they sit in a high-risk area. Follow-ups about content not yet reviewed are answered by reading those files under the same boundaries. An empty `skills/review-repo/` folder already existed with no `SKILL.md`; it was used, not treated as an existing skill.
+
+## ez-understand — 2026-10-15
+
+Re-explains the assistant's previous response in plain language at the user's level, a college-freshman level by default or the level set in a profile the user keeps themselves. Created because agents often give technical, wordy overviews that are hard to follow, and different users need different depth.
+
+**Source:** plan-new-skill brief
+
+**Files created**
+
+- `skills/ez-understand/SKILL.md`
+- `skills/ez-understand/evals/scenarios.md`
+
+**Assumptions:** The source is the most recent substantive assistant response, or the part of it the user names. The default-level "ask for more or less detail" line is omitted when a profile governs the level. An in-chat level change lasts for the rest of the conversation. A declined profile suggestion is not repeated for the same preference. An already-simple response gets an offer of more depth, and a doubtful claim is flagged rather than corrected with new research.
+
 ## run-evals — 2026-10-15
 
 Runs one skill's behavioral scenarios in fresh, isolated runs (or guided runs on hosts without separate agents), judges each with quoted evidence, and records results, history, and untested paths in the skill's `EVALS.md`. Created because every skill had scenarios but nothing ran them, so no skill could meet the frontmatter schema's "evals run once" condition.

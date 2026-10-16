@@ -27,7 +27,7 @@ Each skill is a self-contained directory under `skills/`. The SKILL.md file is t
 
 ## Current Skills
 
-Four skills form a pipeline: plan-new-skill → create-skill → review-skill → update-skill. Each step is invoked separately; no skill runs another without the user's agreement. sync-skills sits outside the pipeline and installs or updates skills in a host.
+Four skills form a pipeline: plan-new-skill → create-skill → review-skill → update-skill. Each step has its own scope. An explicit request covering multiple steps authorizes handoffs between available skills without repeated approval; otherwise ask before starting an additional step. sync-skills sits outside the pipeline and installs or updates skills in a host.
 
 - **plan-new-skill** — Conducts an adaptive requirements interview to refine a new skill idea into a confirmed brief. Interview-only; does not create files. Routes changes to existing skills to update-skill.
 - **create-skill** — Authors a complete skill directory (SKILL.md, evals/scenarios.md) from a brief or description, updates README.md, logs the creation in logs/NEW.md, validates against quality principles, and offers review-skill. No git or installation.

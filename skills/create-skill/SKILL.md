@@ -9,9 +9,15 @@ Author a new AI skill as a complete, ready-to-use directory in this repository. 
 
 ## Operating boundary
 
-Create files and read existing files in the repository. Write only to the new skill directory, `README.md`, and `logs/NEW.md` at the repository root (create it if missing). Do not perform git operations, install skills, execute the authored skill's workflow, modify or overwrite an existing skill, or write to `logs/UPDATES.md`. Do not invoke plan-new-skill or update-skill automatically; only suggest them when appropriate. Run review-skill only after the user agrees.
+Create files and read existing files in the repository. Write only to the new skill directory, `README.md`, and `logs/NEW.md` at the repository root (create it if missing). Do not perform git operations, install skills, execute the authored skill's workflow, modify or overwrite an existing skill, or write to `logs/UPDATES.md`. Invoke other lifecycle skills only for steps the user authorized, following Existing authorization and handoffs. An explicit request to create and review already authorizes the review.
 
 Paths in this skill are relative to the root of the skills repository (the folder that contains `skills/`), not to wherever this skill is installed.
+
+## Existing authorization and handoffs
+
+Use the current request and prior explicit approvals to determine what is authorized. Do not ask again for the same action within the same scope. A general request to improve something does not approve unrelated changes, and silence is not approval. A later stop, refusal, or scope restriction overrides earlier authorization.
+
+Finish this skill's work within its operating boundary. If the user also requested a subsequent lifecycle step, hand off to the appropriate available skill in the same request; follow that skill's boundaries rather than expanding this one's permissions. If it is unavailable, report the completed work and the remaining step honestly. Do not start unrequested follow-up work. Ask when the target or consequential requirements are unresolved, the proposed action exceeds authorization, or a destructive action needs specific approval. Host permissions still apply.
 
 ## Workflow
 
@@ -19,7 +25,7 @@ Paths in this skill are relative to the root of the skills repository (the folde
 
 Accept a confirmed brief from plan-new-skill or a direct description from the user. Evaluate whether the input contains enough information to author a skill: at minimum, a clear purpose, intended behavior, and scope.
 
-If the input is thin — missing purpose, behavior, or scope — offer the user the option to use plan-new-skill to develop a complete brief. If the user accepts, stop without creating files and tell them to return with the confirmed brief. If the user declines, proceed with the supplied details and record reasonable assumptions. Do not interview the user or ask iterative clarifying questions.
+If the input is thin — missing purpose, behavior, or scope — offer the user the option to use plan-new-skill to develop a complete brief. If the user accepts, hand off to plan-new-skill if available, then resume authoring from its completed brief under the existing creation request. If unavailable, stop without creating files and explain that a brief is needed. If the user declines, proceed with the supplied details and record reasonable assumptions. Do not interview the user or ask iterative clarifying questions.
 
 ### 2. Check for name collisions
 
@@ -89,7 +95,7 @@ If validation reveals issues, fix them before reporting completion. Report the v
 
 ### 8. Offer a review
 
-After reporting completion, ask once whether the user wants to run review-skill on the new skill. If they agree, run it. If they decline, do nothing further. If review-skill cannot be run in this host, do not offer it; tell the user to run it separately instead.
+After reporting creation, run review-skill if review was already requested. Otherwise offer it once and run it only if accepted. If the user declines, do nothing further. If review-skill cannot be run in this host, do not offer it; tell the user to run it separately instead.
 
 ## Constraints and edge cases
 
@@ -129,4 +135,4 @@ Report to the user:
 - Any assumptions that were made due to missing detail.
 - Validation results confirming the skill meets quality principles.
 
-Then offer review-skill once, as in step 8. Do not execute the authored skill or begin any other follow-up task unless the user requests it.
+Handle the review as in step 8. Do not execute the authored skill. Continue other authorized lifecycle steps through the appropriate skills; otherwise stop.
