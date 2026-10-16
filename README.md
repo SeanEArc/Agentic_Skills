@@ -11,6 +11,7 @@ A repository of reusable AI skill definitions — structured prompt instructions
 | **review-skill** | Reviews an existing skill and writes a human-readable `REVIEW.md` in its folder with 1–5 scores, scope analysis, prioritized improvements, token-cost and runtime estimates, reliability, and a workflow diagram. Read-only toward the reviewed skill. |
 | **update-skill** | Improves an existing skill by proposing prioritized updates from its `REVIEW.md` or user requests, applying only approved items, and logging each change in `logs/UPDATES.md`. Marks `REVIEW.md` as stale unless the review is rerun. |
 | **sync-skills** | Downloads skills from a source repository (GitHub by default, or a local checkout) and shows each installed skill's status: not installed, up to date, out of date, edited since install, or deprecated. Installs, updates, or removes only the skills the user selects, never overwrites local edits, and packages skills for Claude.ai or ChatGPT. No git operations. |
+| **run-evals** | Runs one skill's `evals/scenarios.md` scenarios in fresh, isolated runs (or guides you through them on hosts that can't), judges each with quoted evidence, and records the results, run history, and untested paths in the skill's `EVALS.md`. Never edits the skill under test; suggests update-skill for failures. |
 
 ## Skill lifecycle
 
