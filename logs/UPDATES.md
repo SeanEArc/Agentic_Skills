@@ -1,5 +1,24 @@
 # Skill updates
 
+## plan-new-application — 2026-10-18
+
+Applied every improvement from the skill's review, plus the eval coverage gaps it noted. The changes make scope challenges and verification more consistent, define the handoff and folder-name rules, and extend the evals to the paths that had no scenario.
+
+**Changes**
+
+1. **Scope-challenge test** (`SKILL.md`, Challenge scope) — Each feature is compared against the confirmed purpose, goal, and core features; reasonable extensions need no challenge. *Why:* "outside the core purpose" was undefined. *Why it is better:* challenges are consistent across runs.
+2. **Bounded verification** (`SKILL.md`, Tradeoffs) — Verification is limited to decision-driving claims and stops after one or two reliable sources, with the source named inline. *Why:* effort was unbounded. *Why it is better:* predictable runtime and consistent labels.
+3. **Delegated finalization** (`SKILL.md`, Confirmation) — A delegated run uses and reports the proposed folder name, still subject to the overwrite question. *Why:* folder-name confirmation was ambiguous. *Why it is better:* no unconfirmed path.
+4. **Handoff target** (`SKILL.md`, Constraints) — A requested handoff passes the saved `plan.md` path to an available reviewing skill; if none exists, the skill says so and stops. *Why:* the target was undefined. *Why it is better:* no false handoff claims.
+5. **Folder-name safety** (`SKILL.md`, Saving the plan) — Names must be short lowercase ASCII kebab-case with no separators; otherwise one is proposed and confirmed. *Why:* unsafe names were unhandled. *Why it is better:* writes stay inside `private/planned-applications/`.
+6. **Existing-application case** (`SKILL.md`, Constraints) — The skill explains its boundary, writes nothing, and may offer to plan a separate new application. *Why:* "ask how to proceed" was open-ended. *Why it is better:* a defined outcome.
+7. **Plan size** (`SKILL.md`, Output specification) — Plan length is proportional to complexity. *Why it is better:* avoids padded plans.
+8. **Diagram validity** (`SKILL.md`, Output specification) — The Mermaid diagram is simple and valid, and the prose stands alone. *Why it is better:* readable if rendering fails.
+9. **Tradeoff label placement** (`SKILL.md`, Output specification) — Sources are named inline. *Why it is better:* consistent labels.
+10. **Eval coverage** (`evals/scenarios.md`) — Added scenarios 11–18 (requested handoff with no reviewer, delegated decision, conflicting requirements, recap revision, waived confirmation, no file access, unsafe folder name, existing application); rewrote scenario 10 to be runnable; made scenario 2's pass criteria name checkable costs. *Why it is better:* covers previously untested paths.
+
+**Review items addressed:** High 1–2; Medium 3–6; Low 7–9; Reliability findings on eval coverage, eval 10, and eval 2.
+
 ## ez-understand — 2026-10-15
 
 Widened the skill to explain topics the user names, not only the previous response, after a request to "help me understand RAG" fell outside its scope. Also applied every REVIEW.md improvement: profile recognition, a tighter trigger, the rule for flagging doubt, excluding boundary replies as a source, a once-per-conversation detail line, and broader eval coverage.

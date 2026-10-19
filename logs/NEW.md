@@ -1,5 +1,31 @@
 # New skills
 
+## observe-app — 2026-10-18
+
+Installs and runs an application or repository that already passed a safety review, only inside a disposable virtual machine with per-step approval, observes in depth how the whole application works, and saves rebuild-ready research to `private/analyzed-applications/<app-name>/deep-analysis.md`. Created so a later planning agent can split a reverse-engineering effort into phases without the user risking their own hardware.
+
+**Source:** plan-new-skill brief
+
+**Files created**
+
+- `skills/observe-app/SKILL.md`
+- `skills/observe-app/evals/scenarios.md`
+
+**Assumptions:** Screenshots are saved in the same app folder as the report. The dated-copy naming (`deep-analysis-<YYYY-MM-DD>.md`, with `_2`, `_3` on clashes) mirrors analyze-app. A session that stops early saves a partial report labeled incomplete and still runs cleanup approval. A Security observations section records any suspicious behavior that triggered a stop. The safety gate checks `private/repo-review/` and `private/analyzed-applications/<app-name>/analysis.md`. Operating inside a VM and creating one depend on host capabilities and are unverified. analyze-app still declines all install requests and does not mention observe-app; pointing it there would be an update-skill change.
+
+## plan-new-application — 2026-10-18
+
+Interviews the user about a new application of any type, challenges out-of-scope ideas, states long-term tradeoffs as verified or labeled unverified, and saves a plan with a Mermaid diagram and build-phase outline to `private/planned-applications/<idea-name>/plan.md`. Created so application ideas become reviewable plans that a separate agent can phase into subagent tasks.
+
+**Source:** plan-new-skill brief
+
+**Files created**
+
+- `skills/plan-new-application/SKILL.md`
+- `skills/plan-new-application/evals/scenarios.md`
+
+**Assumptions:** The `private/` folder is relative to the folder the skill is run from, matching analyze-app. The overwrite question applies when `plan.md` already exists in the idea folder; "save alongside" keeps the existing file and writes `plan_2.md`, `plan_3.md`, and so on. Verification of tradeoffs and stack currency depends on host web or documentation access; without it, claims are labeled unverified. An empty, untracked `skills/analyze-application/` folder already existed and was left untouched.
+
 ## analyze-app — 2026-10-16
 
 Researches an application passively and saves a report with a brief summary, core functionality, and a conceptual explanation of how it works, one folder per app under `private/analyzed-applications/`. Created so the user can keep reviewable app analyses to revisit and give other agents as context, for example to plan reverse-engineering work.

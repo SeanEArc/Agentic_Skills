@@ -4,7 +4,7 @@ A repository of reusable AI skill definitions — structured prompt instructions
 
 ## Skills
 
-The nine skills below are grouped by purpose. Their folders remain directly under `skills/`.
+The eleven skills below are grouped by purpose. Their folders remain directly under `skills/`.
 
 ### Skill lifecycle
 
@@ -27,6 +27,8 @@ Assess repositories and understand applications from evidence.
 |-------|-------------|
 | **review-repo** | Reviews a GitHub or local repository before you trust it. Flags harmful or malicious behavior and AI-directed prompt injection first, with file citations and severity, then explains what the repository does and how its parts work together. Saves the report to `private/repo-review/<repo-name>-review.md`. Strictly read-only and never runs the repository's commands. |
 | **analyze-app** | Researches an application from public evidence, never running or installing it, and saves a report with a brief summary, core functionality, and a conceptual explanation of how it works to `private/analyzed-applications/<app-name>/analysis.md`. Asks about typos or ambiguous targets first, hands repositories to review-repo and links its report, and adds a planning handoff section on request. |
+| **observe-app** | Installs and runs an app or repository that already passed a `review-repo` or `analyze-app` safety check, only inside a disposable virtual machine, and asks before each download, install, network access, and sign-up. Observes how the whole app works and saves rebuild-ready research (features, data flows, formats, network, sessions, behavior specs, test cases, constraints, unknowns) to `private/analyzed-applications/<app-name>/deep-analysis.md`. Exports only the report and screenshots, then deletes the app, and the VM if it created one. Never plans phases or reverse engineers. |
+| **plan-new-application** | Conducts an adaptive requirements interview to refine a new application idea of any type, challenges out-of-scope ideas, and states long-term tradeoffs as verified or labeled unverified. After you confirm a recap, saves a plan with a Mermaid diagram and a high-level build-phase outline to `private/planned-applications/<idea-name>/plan.md`. Never writes code or builds the application; a separate agent later phases the plan into subagent tasks. |
 
 ### Learning
 
@@ -67,7 +69,8 @@ logs/
   TODO.md                 # Open repository-level improvements
 private/                  # Gitignored local reports and planning notes
   repo-review/            # Reports written by review-repo
-  analyzed-applications/  # Reports written by analyze-app
+  analyzed-applications/  # Reports written by analyze-app and observe-app
+  planned-applications/   # Plans written by plan-new-application
 ```
 
 A skill is fully specified by its `SKILL.md`. There is no code, configuration, or build step.
