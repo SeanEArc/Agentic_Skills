@@ -1,5 +1,18 @@
 # New skills
 
+## break-it-down — 2026-10-18
+
+Breaks a planned application's broad build phases into narrow, self-contained implementation phases and saves them to `implementation_phases.md` beside the plan, never editing the plan. Created so phases can be handed to other agents and split further on repeat runs.
+
+**Source:** plan-new-skill brief
+
+**Files created**
+
+- `skills/break-it-down/SKILL.md`
+- `skills/break-it-down/evals/scenarios.md`
+
+**Assumptions:** Works on any plan under `private/planned-applications/`, asking which when several exist. Sub-phases are numbered under their parent (3.1, 3.2) so other phases are not renumbered; references to a split phase are updated. The revision log is a section at the end of the file. A re-run checks whether the plan changed since the file was written and asks before continuing. Starting over requires explicit confirmation before overwriting.
+
 ## observe-app — 2026-10-18
 
 Installs and runs an application or repository that already passed a safety review, only inside a disposable virtual machine with per-step approval, observes in depth how the whole application works, and saves rebuild-ready research to `private/analyzed-applications/<app-name>/deep-analysis.md`. Created so a later planning agent can split a reverse-engineering effort into phases without the user risking their own hardware.
