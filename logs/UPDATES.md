@@ -1,5 +1,23 @@
 # Skill updates
 
+## break-it-down — 2026-10-19
+
+Refocused the skill from agent-ready implementation phases to clear project phases grouped under milestones, and removed the promise that its output is ready for parallel coding agents, since one run does not make a plan ready for that. The output file is renamed to `project_phases.md`. All four open REVIEW.md improvements were also applied.
+
+**Changes**
+
+1. **Phases and milestones as the purpose** (`SKILL.md`, frontmatter, title, intro, step 4, Completion) — The skill now organizes a plan's build phases into ordered phases grouped under milestones that together reach the end goal. *Why:* the user found the agent-task focus too narrow. *Why it is better:* the stated purpose matches what one run delivers.
+2. **Parallel-coding framing removed** (`SKILL.md`, boundary, step 4, step 5, constraints, Output specification) — Dropped the Parallel with field, the "self-contained task brief a separate agent can act on" rule, parallel groups in the overview, and the parallel-claims check. Added a boundary against splitting work for parallel agents and an edge case explaining that step is separate. *Why:* one run may not leave a plan ready for parallel agents. *Why it is better:* no overpromised output.
+3. **Milestones added** (`SKILL.md`, step 4, step 5, Output specification) — Each milestone has a goal, its phases, and observable Reached when criteria. Checks require every phase to belong to exactly one milestone and forbid dependencies on later milestones. Re-run sub-phases stay in their parent's milestone. *Why:* the user wanted clear milestones. *Why it is better:* progress has checkpoints you can track.
+4. **Output renamed** (`SKILL.md`, `evals/scenarios.md`, `README.md`) — `implementation_phases.md` is now `project_phases.md`, with the title `Project Phases: <application name>`. *Why:* user choice. *Why it is better:* the name matches the content. Files from earlier runs are not detected on a re-run.
+5. **Phase sizing test** (`SKILL.md`, step 4 and step 5) — A phase is narrow enough when it produces one verifiable outcome and its Done-when criteria can be confirmed without a later, unfinished phase. *Why:* sizing was subjective. *Why it is better:* more consistent depth across runs.
+6. **Already-narrow plan phases** (`SKILL.md`, step 4) — On a first run, a plan phase that passes the sizing test is carried over as one phase. *Why:* behavior was unspecified. *Why it is better:* no artificial splits.
+7. **Split everything** (`SKILL.md`, step 5) — A request to split every phase is confirmed once, then all phases count as chosen. *Why:* behavior was undefined. *Why it is better:* a defined path.
+8. **Evals aligned and extended** (`evals/scenarios.md`) — Shared checks now require six phase fields, milestones, and no parallel framing. Scenarios 1, 2, and 6 were updated; added scenario 8 (parallel-agent request), 9 (plan changed), and 10 (plan without build phases). *Why:* the evals tested the old shape and missed two paths. *Why it is better:* the evals match the new behavior and cover more paths.
+9. **README entry** (`README.md`) — The skill description and the `private/` folder note now describe phases, milestones, and `project_phases.md`. *Why:* the purpose changed. *Why it is better:* the README stays accurate.
+
+**Review items addressed:** Medium 1, Medium 2, Low 3, Low 5 (Low 4 needed no change), plus user-requested items 1–4 and 9
+
 ## plan-new-application — 2026-10-18
 
 Applied every improvement from the skill's review, plus the eval coverage gaps it noted. The changes make scope challenges and verification more consistent, define the handoff and folder-name rules, and extend the evals to the paths that had no scenario.

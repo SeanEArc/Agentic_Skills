@@ -29,7 +29,7 @@ Assess repositories and understand applications from evidence.
 | **analyze-app** | Researches an application from public evidence, never running or installing it, and saves a report with a brief summary, core functionality, and a conceptual explanation of how it works to `private/analyzed-applications/<app-name>/analysis.md`. Asks about typos or ambiguous targets first, hands repositories to review-repo and links its report, and adds a planning handoff section on request. |
 | **observe-app** | Installs and runs an app or repository that already passed a `review-repo` or `analyze-app` safety check, only inside a disposable virtual machine, and asks before each download, install, network access, and sign-up. Observes how the whole app works and saves rebuild-ready research (features, data flows, formats, network, sessions, behavior specs, test cases, constraints, unknowns) to `private/analyzed-applications/<app-name>/deep-analysis.md`. Exports only the report and screenshots, then deletes the app, and the VM if it created one. Never plans phases or reverse engineers. |
 | **plan-new-application** | Conducts an adaptive requirements interview to refine a new application idea of any type, challenges out-of-scope ideas, and states long-term tradeoffs as verified or labeled unverified. After you confirm a recap, saves a plan with a Mermaid diagram and a high-level build-phase outline to `private/planned-applications/<idea-name>/plan.md`. Never writes code or builds the application; a separate agent later phases the plan into subagent tasks. |
-| **break-it-down** | Breaks a planned application's broad build phases into narrow, self-contained implementation phases (goal, inputs, deliverables, dependencies, parallel work, done-when check) that together reach the plan's end goal, and saves them to `implementation_phases.md` beside the plan. Asks clarifying questions when the plan is unclear, and on re-runs splits only the phases you choose. Never edits the plan, writes code, or dispatches agents. |
+| **break-it-down** | Turns a planned application's broad build phases into clear, ordered phases (goal, inputs, deliverables, dependencies, done-when check) grouped under milestones with observable reached-when checks, which together reach the plan's end goal, and saves them to `project_phases.md` beside the plan. Asks clarifying questions when the plan is unclear, and on re-runs splits only the phases you choose. Never edits the plan, writes code, splits work for parallel agents, or dispatches agents. |
 
 ### Learning
 
@@ -71,7 +71,7 @@ logs/
 private/                  # Gitignored local reports and planning notes
   repo-review/            # Reports written by review-repo
   analyzed-applications/  # Reports written by analyze-app and observe-app
-  planned-applications/   # Plans written by plan-new-application; implementation_phases.md written by break-it-down
+  planned-applications/   # Plans written by plan-new-application; project_phases.md written by break-it-down
 ```
 
 A skill is fully specified by its `SKILL.md`. There is no code, configuration, or build step.
